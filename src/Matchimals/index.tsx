@@ -16,8 +16,8 @@ import { PICKUP_SCALE } from "../Card";
 import type { CardDropPoint } from "../Card";
 import FlyingCard from "../FlyingCard";
 import type { FlyingCardHandle } from "../FlyingCard";
-import Button from "../Button";
 import CircleButton from "../CircleButton";
+import { MenuIcon, SkipIcon } from "../Icons";
 import Nameplate from "../Nameplate";
 import Table from "../Table";
 import type { TableHandle } from "../Table";
@@ -225,7 +225,8 @@ const Matchimals = ({ backToMainMenu, ctx, G, moves }: MatchimalsProps) => {
           nextCard={G.deck[0]}
           onArrived={onFlightArrived}
         />
-        <Button
+        <CircleButton
+          accessibilityLabel="Pass"
           onPress={onGamePass}
           style={{
             position: "absolute",
@@ -233,9 +234,10 @@ const Matchimals = ({ backToMainMenu, ctx, G, moves }: MatchimalsProps) => {
             right: Math.max(insets.right, 16),
           }}
         >
-          PASS
-        </Button>
+          <SkipIcon size={32} />
+        </CircleButton>
         <CircleButton
+          accessibilityLabel="Menu"
           onPress={() => setShowMenu(true)}
           style={{
             position: "absolute",
@@ -243,7 +245,7 @@ const Matchimals = ({ backToMainMenu, ctx, G, moves }: MatchimalsProps) => {
             right: Math.max(insets.right, 16),
           }}
         >
-          ?
+          <MenuIcon size={32} />
         </CircleButton>
       </View>
       {ctx.gameover ? (

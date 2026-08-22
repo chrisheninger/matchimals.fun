@@ -3,3 +3,5 @@
 export { default as CogIcon } from "./Cog";
 export { default as CrosshairIcon } from "./Crosshair";
 export { default as ExitIcon } from "./Exit";
+export { default as MenuIcon } from "./Menu";
+export { default as SkipIcon } from "./Skip";
