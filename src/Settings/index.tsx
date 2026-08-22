@@ -53,9 +53,9 @@ const Settings = ({ isVisible, hide }: SettingsProps) => {
         </View>
         {canUseHaptics ? (
           <View style={styles.row}>
-            <Text style={styles.label}>Haptics</Text>
+            <Text style={styles.label}>Vibration</Text>
             <Switch
-              accessibilityLabel="Haptics"
+              accessibilityLabel="Vibration"
               value={hapticsEnabled}
               onChange={setHapticsEnabled}
             />
