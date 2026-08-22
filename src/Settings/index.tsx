@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import AppIconChooser from "../AppIconChooser";
 import AppIconTile from "../AppIconChooser/AppIconTile";
+import Button from "../Button";
 import Dialog from "../Dialog";
 import { useMusic } from "../Music";
 import Switch from "../Switch";
@@ -58,9 +59,14 @@ const Settings = ({ isVisible, hide, player }: SettingsProps) => {
             style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
           >
             <Text style={styles.label}>App Icon</Text>
-            <AppIconTile animal={appIcon} size={48} />
+            <View style={styles.tile}>
+              <AppIconTile animal={appIcon} size={48} />
+            </View>
           </Pressable>
         ) : null}
+        <Button color="#fff" onPress={hide} style={styles.done}>
+          DONE
+        </Button>
       </Dialog>
       {canChangeAppIcon ? (
         <AppIconChooser
@@ -84,8 +90,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 8,
   },
+  // Fill the card; the minimum keeps a comfortable gap between label and switch
+  // when the card hugs its content
+  // Labels start, and the icon tile ends, on the 4pt white border line of the
+  // switches and the DONE button
   row: {
-    width: 296,
+    alignSelf: "stretch",
+    minWidth: 296,
+    paddingLeft: 4,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -93,6 +105,12 @@ const styles = StyleSheet.create({
   },
   rowPressed: {
     opacity: 0.8,
+  },
+  tile: {
+    marginRight: 4,
+  },
+  done: {
+    marginTop: 16,
   },
   label: {
     color: colors.grayDark,
