@@ -3,6 +3,7 @@
 # Deploy the iOS app to TestFlight, entirely on this machine.
 #
 #   bun run deploy:ios
+#   bun run deploy:ios --upload-only   # retry the upload of the last archive
 #
 # Pipeline: guardrails → bump ios.buildNumber in app.json (+ commit) →
 # expo prebuild → xcodebuild archive → xcodebuild -exportArchive with
@@ -18,6 +19,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 
+upload_only=false
+[[ "${1:-}" == "--upload-only" ]] && upload_only=true
+
 err() {
   echo "✖ $1" >&2
   exit 1
@@ -32,46 +36,55 @@ branch=$(git rev-parse --abbrev-ref HEAD)
 echo "▸ Typechecking…"
 bun run typecheck
 
-# --- Bump build number (app.json is the CNG source of truth) -----------------
-
-BUILD_NUMBER=$(bun -e '
-  const file = "app.json";
-  const json = await Bun.file(file).json();
-  const next = String(Number(json.expo.ios.buildNumber) + 1);
-  json.expo.ios.buildNumber = next;
-  await Bun.write(file, JSON.stringify(json, null, 2) + "\n");
-  console.log(next);
-')
 VERSION=$(bun -e 'console.log((await Bun.file("app.json").json()).expo.version)')
 TEAM_ID=$(bun -e 'console.log((await Bun.file("app.json").json()).expo.ios.appleTeamId)')
-
-echo "▸ Deploying Matchimals ${VERSION} (build ${BUILD_NUMBER}) as team ${TEAM_ID}"
-git add app.json
-git commit -m "chore: bump iOS build number to ${BUILD_NUMBER}"
-
-# --- Prebuild (regenerates ios/ from app.json) --------------------------------
-
-echo "▸ Prebuilding…"
-# CocoaPods needs a UTF-8 locale; in a bare shell it crashes and prebuild
-# still exits 0, leaving ios/ without Pods
-LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 bun run prebuild
-[[ -f ios/Podfile.lock ]] || err "prebuild finished without installing Pods."
-
-# --- Archive ------------------------------------------------------------------
-
 ARCHIVE_PATH="build/Matchimals.xcarchive"
-rm -rf "$ARCHIVE_PATH"
 
-echo "▸ Archiving (this takes a while)…"
-xcodebuild -workspace ios/Matchimals.xcworkspace \
-  -scheme Matchimals \
-  -configuration Release \
-  -destination 'generic/platform=iOS' \
-  -archivePath "$ARCHIVE_PATH" \
-  archive \
-  -allowProvisioningUpdates \
-  DEVELOPMENT_TEAM="$TEAM_ID" \
-  CODE_SIGN_IDENTITY="Apple Development"
+if $upload_only; then
+  # The previous run archived but the upload failed (typically the Apple ID
+  # in Xcode needed signing in again): reuse that archive and its build number.
+  [[ -d "$ARCHIVE_PATH" ]] || err "No archive at $ARCHIVE_PATH to upload."
+  BUILD_NUMBER=$(bun -e 'console.log((await Bun.file("app.json").json()).expo.ios.buildNumber)')
+  echo "▸ Re-uploading Matchimals ${VERSION} (build ${BUILD_NUMBER}) as team ${TEAM_ID}"
+else
+  # --- Bump build number (app.json is the CNG source of truth) ---------------
+
+  BUILD_NUMBER=$(bun -e '
+    const file = "app.json";
+    const json = await Bun.file(file).json();
+    const next = String(Number(json.expo.ios.buildNumber) + 1);
+    json.expo.ios.buildNumber = next;
+    await Bun.write(file, JSON.stringify(json, null, 2) + "\n");
+    console.log(next);
+  ')
+
+  echo "▸ Deploying Matchimals ${VERSION} (build ${BUILD_NUMBER}) as team ${TEAM_ID}"
+  git add app.json
+  git commit -m "chore: bump iOS build number to ${BUILD_NUMBER}"
+
+  # --- Prebuild (regenerates ios/ from app.json) ------------------------------
+
+  echo "▸ Prebuilding…"
+  # CocoaPods needs a UTF-8 locale; in a bare shell it crashes and prebuild
+  # still exits 0, leaving ios/ without Pods
+  LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 bun run prebuild
+  [[ -f ios/Podfile.lock ]] || err "prebuild finished without installing Pods."
+
+  # --- Archive ----------------------------------------------------------------
+
+  rm -rf "$ARCHIVE_PATH"
+
+  echo "▸ Archiving (this takes a while)…"
+  xcodebuild -workspace ios/Matchimals.xcworkspace \
+    -scheme Matchimals \
+    -configuration Release \
+    -destination 'generic/platform=iOS' \
+    -archivePath "$ARCHIVE_PATH" \
+    archive \
+    -allowProvisioningUpdates \
+    DEVELOPMENT_TEAM="$TEAM_ID" \
+    CODE_SIGN_IDENTITY="Apple Development"
+fi
 
 # --- Export & upload to App Store Connect ------------------------------------
 
