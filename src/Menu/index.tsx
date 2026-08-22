@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import { View } from "react-native";
 
 import { colors } from "../constants/colors";
 import { DevTools } from "./DevTools";
 import Button from "../Button";
+import { CogIcon, CrosshairIcon, ExitIcon } from "../Icons";
 import Dialog from "../Dialog";
-import Logo from "../Logo";
+import DoneButton from "../Dialog/DoneButton";
 import Settings from "../Settings";
-import SettingsButton from "../Settings/SettingsButton";
-import type { PlayerId } from "../hooks/players";
 import type { Moves } from "./DevTools";
 
 interface MenuProps {
@@ -16,7 +14,6 @@ interface MenuProps {
   backToMainMenu: () => void;
   hide: () => void;
   isVisible: boolean;
-  player: PlayerId;
   scrollToCenter: () => void;
 }
 
@@ -25,66 +22,49 @@ const Menu = ({
   backToMainMenu,
   hide,
   isVisible,
-  player,
   scrollToCenter,
 }: MenuProps) => {
   const [showSettings, setShowSettings] = useState(false);
 
   return (
     <>
-      <Dialog
-        player={player}
-        isVisible={isVisible}
-        hide={hide}
-        style={{ maxWidth: 360 }}
-      >
-        <View
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: 16,
-            marginTop: -16,
-          }}
-        >
-          <Logo width={240} height={72} />
-        </View>
-        <SettingsButton
+      <Dialog isVisible={isVisible} hide={hide} style={{ maxWidth: 360 }}>
+        <Button
+          icon={<CogIcon />}
           onPress={() => {
             hide();
             setShowSettings(true);
           }}
-          style={{ alignSelf: "center", marginBottom: 24 }}
-        />
+          style={{ marginTop: 8 }}
+        >
+          SETTINGS
+        </Button>
         <Button
           color={colors.greenLight}
+          icon={<CrosshairIcon />}
           onPress={() => {
             scrollToCenter();
             hide();
           }}
-          style={{ marginBottom: 24 }}
+          style={{ marginTop: 16 }}
         >
           SCROLL TO CENTER
         </Button>
         <Button
           color={colors.redLight}
+          icon={<ExitIcon />}
           onPress={backToMainMenu}
-          style={{ marginBottom: 24 }}
+          style={{ marginTop: 16 }}
         >
           EXIT TO MAIN MENU
         </Button>
-        <Button color="#fff" onPress={hide}>
-          BACK TO GAME
-        </Button>
+        <DoneButton onPress={hide} style={{ marginTop: 32 }} />
 
         {(global as { __DEV__?: boolean })?.__DEV__ ? (
           <DevTools moves={moves} />
         ) : null}
       </Dialog>
-      <Settings
-        isVisible={showSettings}
-        hide={() => setShowSettings(false)}
-        player={player}
-      />
+      <Settings isVisible={showSettings} hide={() => setShowSettings(false)} />
     </>
   );
 };

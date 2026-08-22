@@ -255,7 +255,6 @@ const Matchimals = ({ backToMainMenu, ctx, G, moves }: MatchimalsProps) => {
       ) : null}
       <Menu
         moves={moves}
-        player={ctx.currentPlayer}
         backToMainMenu={backToMainMenu}
         scrollToCenter={() => tableRef?.current?.scrollToCenter()}
         isVisible={showMenu}
