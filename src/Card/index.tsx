@@ -36,6 +36,7 @@ interface CardProps extends ViewProps {
   card?: CardType;
   disabled?: boolean;
   flipped?: boolean;
+  backLogo?: boolean;
   // Returns whether the card was placed. A placement commits the move
   // immediately (this deck card hides at once and unmounts on the next deck
   // render) while the FlyingCard overlay carries the visual into the cell.
@@ -52,6 +53,7 @@ const Card = ({
   card = {} as CardType,
   disabled,
   flipped,
+  backLogo,
   onCardDrop,
   dragCenterX,
   dragCenterY,
@@ -196,7 +198,7 @@ const Card = ({
   if (disabled) {
     return (
       <View style={[styles.root, style]} {...rest}>
-        {!flipped ? <CardBack /> : <CardFront card={card} />}
+        {!flipped ? <CardBack logo={backLogo} /> : <CardFront card={card} />}
       </View>
     );
   }
@@ -208,7 +210,7 @@ const Card = ({
         style={[styles.root, style, dragging && styles.dragging, animatedStyle]}
         {...rest}
       >
-        {!flipped ? <CardBack /> : <CardFront card={card} />}
+        {!flipped ? <CardBack logo={backLogo} /> : <CardFront card={card} />}
       </Reanimated.View>
     </GestureDetector>
   );

@@ -48,6 +48,7 @@ const Deck = ({
           dragCenterY={dragCenterY}
           dragActive={dragActive}
           flipped={i === 0}
+          backLogo={i < 3}
           style={{
             position: "absolute",
             left: i === 0 ? 0 : i * 3,
