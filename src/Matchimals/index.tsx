@@ -26,10 +26,13 @@ import Menu from "../Menu";
 import Victory from "../Victory";
 import { isLegalMove } from "./game";
 import type { GameState } from "./game";
+import type { ScreenshotState } from "../screenshots";
 import { useMusic } from "../Music";
 
 type MatchimalsProps = BoardProps<GameState> & {
   backToMainMenu: () => void;
+  // Screenshot mode only: the board state to jump to (see src/screenshots.ts)
+  snapshot?: Exclude<ScreenshotState, "menu">;
 };
 
 // Memoized so the urgent placement render can skip the nameplates (they take
@@ -57,11 +60,30 @@ const Nameplates = React.memo(
 
 Nameplates.displayName = "Nameplates";
 
-const Matchimals = ({ backToMainMenu, ctx, G, moves }: MatchimalsProps) => {
+const Matchimals = ({
+  backToMainMenu,
+  ctx,
+  G,
+  moves,
+  snapshot,
+}: MatchimalsProps) => {
   const [showMenu, setShowMenu] = useState(false);
   const music = useMusic();
   const tableRef = useRef<TableHandle>(null);
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (!snapshot) {
+      return;
+    }
+    if (snapshot === "victory") {
+      moves.restoreSnapshot("fourPlayerE", true);
+    } else {
+      moves.restoreSnapshot(snapshot);
+    }
+    tableRef.current?.scrollToCenter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [snapshot]);
 
   // A placement commits the game state at release, but nothing may MOUNT while
   // the FlyingCard overlay is mid-flight: Fabric applies mounts on the main

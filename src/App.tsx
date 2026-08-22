@@ -14,6 +14,7 @@ import MainMenu from "./MainMenu";
 import { MusicProvider } from "./Music";
 import { PlayerProvider } from "./hooks/players";
 import { OverlayProvider } from "./Overlay";
+import { playersForState, useScreenshotState } from "./screenshots";
 
 const SCREEN_FADE = 200;
 
@@ -63,6 +64,19 @@ export default function App() {
   useEffect(() => {
     onMount();
   });
+
+  const screenshotState = useScreenshotState();
+  useEffect(() => {
+    if (!screenshotState) {
+      return;
+    }
+    if (screenshotState === "menu") {
+      setIsMainMenuVisible(true);
+      return;
+    }
+    setNumPlayers(playersForState(screenshotState));
+    setIsMainMenuVisible(false);
+  }, [screenshotState]);
 
   const backToMainMenu = useCallback(() => {
     setIsMainMenuVisible(true);
@@ -120,7 +134,14 @@ export default function App() {
                     entering={FadeIn.duration(SCREEN_FADE)}
                     exiting={FadeOut.duration(SCREEN_FADE)}
                   >
-                    <MatchimalsClient backToMainMenu={backToMainMenu} />
+                    <MatchimalsClient
+                      backToMainMenu={backToMainMenu}
+                      snapshot={
+                        screenshotState && screenshotState !== "menu"
+                          ? screenshotState
+                          : undefined
+                      }
+                    />
                   </Reanimated.View>
                 )}
               </View>
