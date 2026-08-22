@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -18,6 +18,8 @@ import { colors } from "../constants/colors";
 import AudioControls from "../AudioControls";
 import PlayerButton from "../PlayerButton";
 import Logo from "../Logo";
+import Settings from "../Settings";
+import SettingsButton from "../Settings/SettingsButton";
 import Toggle from "../Toggle";
 import type { GameMode } from "../Matchimals/game";
 
@@ -40,6 +42,8 @@ const Menu = ({
   // On phone-sized viewports the full column collides with the
   // bottom-right audio controls, so tighten the top of the column
   const compact = width < 500 || height < 700;
+
+  const [showSettings, setShowSettings] = useState(false);
 
   const captionOpacity = useSharedValue(0);
   useEffect(() => {
@@ -118,12 +122,21 @@ const Menu = ({
           {modeCaptions[gameMode]}
         </Reanimated.Text>
 
-        <AudioControls
+        <View
           style={{
             position: "absolute",
             bottom: Math.max(insets.bottom, 8),
             right: Math.max(insets.right, 8),
+            flexDirection: "row",
+            gap: 12,
           }}
+        >
+          <AudioControls />
+          <SettingsButton onPress={() => setShowSettings(true)} />
+        </View>
+        <Settings
+          isVisible={showSettings}
+          hide={() => setShowSettings(false)}
         />
       </>
     </ImageBackground>
