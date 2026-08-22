@@ -27,6 +27,7 @@
     "expo-audio": "~56.0.12",
     "expo-build-properties": "~56.0.18",
     "expo-font": "~56.0.6",
+    "expo-haptics": "~56.0.3",
     "expo-splash-screen": "~56.0.10",
     "expo-status-bar": "~56.0.4",
     "lodash": "4.17.21",

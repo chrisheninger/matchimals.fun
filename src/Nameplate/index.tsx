@@ -9,6 +9,7 @@ import {
 import Animals from "../Animals";
 import { usePlayerConfig } from "../hooks/players";
 import AnimalChooser from "../AnimalChooser";
+import { haptics } from "../haptics";
 import type { NameplateProps } from "./types";
 
 const Nameplate = ({
@@ -56,7 +57,10 @@ const Nameplate = ({
       >
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={() => setShowAnimalChooser(true)}
+          onPress={() => {
+            haptics.tap();
+            setShowAnimalChooser(true);
+          }}
         >
           <View
             style={[

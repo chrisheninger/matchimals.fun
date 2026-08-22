@@ -18,6 +18,7 @@ import FlyingCard from "../FlyingCard";
 import type { FlyingCardHandle } from "../FlyingCard";
 import CircleButton from "../CircleButton";
 import { MenuIcon, SkipIcon } from "../Icons";
+import { haptics } from "../haptics";
 import Nameplate from "../Nameplate";
 import Table from "../Table";
 import type { TableHandle } from "../Table";
@@ -163,10 +164,12 @@ const Matchimals = ({ backToMainMenu, ctx, G, moves }: MatchimalsProps) => {
 
     if (!inBounds || !isLegalMove(G, ctx, targetCell)) {
       music.playSoundEffect3(); // Play mismatched card sound effect
+      haptics.reject();
       return false;
     }
 
     music.playSoundEffect1(); // Play card drop sound effect
+    haptics.match();
     // The overlay flies the card face from the release point into the cell on
     // the UI thread; the displayed state stays frozen until it lands, so no
     // mounts can stall frames mid-flight.

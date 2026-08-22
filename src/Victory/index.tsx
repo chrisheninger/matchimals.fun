@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import InAppReview from "react-native-in-app-review";
@@ -8,6 +8,7 @@ import { colors } from "../constants/colors";
 
 import Animals from "../Animals";
 import Button from "../Button";
+import { haptics } from "../haptics";
 import Confetti from "../Confetti";
 import Header, { HEADER_CLEARANCE } from "../Dialog/Header";
 import Title from "../Dialog/Title";
@@ -34,6 +35,10 @@ const Victory = ({ backToMainMenu, player, players }: VictoryProps) => {
   const name = playerConfig[player]?.name;
   const backgroundColor = playerConfig[player]?.color;
   const Icon = Animals[playerConfig[player]?.animal];
+
+  useEffect(() => {
+    haptics.celebrate();
+  }, []);
 
   const handleEndGame = async () => {
     const asyncLastReviewPrompt = await getAsyncLastReviewPrompt();

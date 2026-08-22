@@ -10,6 +10,12 @@ import { useMusic } from "../Music";
 import Switch from "../Switch";
 import { colors } from "../constants/colors";
 import { canChangeAppIcon, useAppIcon } from "../hooks/appIcon";
+import {
+  canUseHaptics,
+  haptics,
+  setHapticsEnabled,
+  useHapticsEnabled,
+} from "../haptics";
 
 interface SettingsProps {
   isVisible: boolean;
@@ -21,6 +27,7 @@ interface SettingsProps {
 const Settings = ({ isVisible, hide }: SettingsProps) => {
   const music = useMusic();
   const { appIcon, setAppIcon } = useAppIcon();
+  const hapticsEnabled = useHapticsEnabled();
   // The chooser opens on top of this dialog, so a pick lands back here
   const [showAppIconChooser, setShowAppIconChooser] = useState(false);
 
@@ -44,12 +51,25 @@ const Settings = ({ isVisible, hide }: SettingsProps) => {
             onChange={music.setSoundEffectsEnabled}
           />
         </View>
+        {canUseHaptics ? (
+          <View style={styles.row}>
+            <Text style={styles.label}>Haptics</Text>
+            <Switch
+              accessibilityLabel="Haptics"
+              value={hapticsEnabled}
+              onChange={setHapticsEnabled}
+            />
+          </View>
+        ) : null}
         {canChangeAppIcon ? (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={`App icon, currently ${appIcon}`}
             accessibilityHint="Choose a different app icon"
-            onPress={() => setShowAppIconChooser(true)}
+            onPress={() => {
+              haptics.tap();
+              setShowAppIconChooser(true);
+            }}
             style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
           >
             <Text style={styles.label}>App Icon</Text>

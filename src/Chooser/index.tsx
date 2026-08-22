@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import type { TouchableOpacityProps } from "react-native";
 
 import { colors } from "../constants/colors";
+import { haptics } from "../haptics";
 
 // Shared by the animal and app-icon pickers so their grids match
 export const CHOOSER_TILE = 72;
@@ -36,7 +37,10 @@ export const ChooserItem = ({
     <TouchableOpacity
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ selected }}
-      onPress={onPress}
+      onPress={(event) => {
+        haptics.select();
+        onPress?.(event);
+      }}
       activeOpacity={0.8}
       style={[
         styles.ring,

@@ -4,6 +4,7 @@ import type { StyleProp, TouchableOpacityProps, ViewStyle } from "react-native";
 import { usePlayerConfig } from "../hooks/players";
 import { colors } from "../constants/colors";
 import Animals from "../Animals";
+import { haptics } from "../haptics";
 
 interface PlayerButtonProps {
   number: number;
@@ -65,7 +66,13 @@ const PlayerButton = ({ number, onPress, style }: PlayerButtonProps) => {
   const { size, margin, rowWidth } = getIconLayout();
 
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity
+      onPress={(event) => {
+        haptics.tap();
+        onPress?.(event);
+      }}
+      activeOpacity={0.8}
+    >
       <View
         style={[
           styles.tag,

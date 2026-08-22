@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import type { TouchableOpacityProps } from "react-native";
 
 import { colors } from "../constants/colors";
+import { haptics } from "../haptics";
 
 interface ButtonProps extends TouchableOpacityProps {
   color?: string;
@@ -13,7 +14,14 @@ interface ButtonProps extends TouchableOpacityProps {
 
 const Button = ({ children, color, icon, onPress, ...rest }: ButtonProps) => {
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={onPress} {...rest}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={(event) => {
+        haptics.tap();
+        onPress?.(event);
+      }}
+      {...rest}
+    >
       <View style={[styles.button, color && { backgroundColor: color }]}>
         <View style={styles.buttonInner}>
           <Text style={styles.buttonText}>{children}</Text>
