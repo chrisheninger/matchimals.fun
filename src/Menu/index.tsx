@@ -3,7 +3,6 @@ import { View } from "react-native";
 
 import { colors } from "../constants/colors";
 import { DevTools } from "./DevTools";
-import AudioControls from "../AudioControls";
 import Button from "../Button";
 import Dialog from "../Dialog";
 import Logo from "../Logo";
@@ -49,22 +48,13 @@ const Menu = ({
         >
           <Logo width={240} height={72} />
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 12,
-            alignSelf: "center",
-            marginBottom: 24,
+        <SettingsButton
+          onPress={() => {
+            hide();
+            setShowSettings(true);
           }}
-        >
-          <AudioControls />
-          <SettingsButton
-            onPress={() => {
-              hide();
-              setShowSettings(true);
-            }}
-          />
-        </View>
+          style={{ alignSelf: "center", marginBottom: 24 }}
+        />
         <Button
           color={colors.greenLight}
           onPress={() => {

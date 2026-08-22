@@ -2,33 +2,22 @@ import React from "react";
 import Svg, { Path } from "svgs";
 import type { SvgProps } from "react-native-svg";
 
-interface LogoProps {
-  width?: number | string;
-  height?: number | string;
-  textPrimaryColor?: string;
-  textSecondaryColor?: string;
-  shadowColor?: string;
-  style?: SvgProps["style"];
-}
+import { colors } from "../constants/colors";
 
-const Logo = ({
-  width,
-  height,
-  textPrimaryColor,
-  textSecondaryColor,
-  shadowColor,
-  style,
-}: LogoProps) => (
-  <Svg
-    title="Matchimals Logo"
-    width={width || "100%"}
-    height={height || "100%"}
-    style={style}
-    viewBox="0 0 1224 240"
-  >
-    <Path
-      fill={shadowColor || "#2A1A12"}
-      d="M492.518,106.594c-2.729-2.729-5.73-4.093-9.005-4.093c-19.647-0.182-35.382,5.776-47.206,17.873
+// The artwork's bounds. The sticker outline strokes reach past them, so the
+// viewBox grows by outlinePad() on every side when `outline` is set.
+const ART_WIDTH = 1224;
+const ART_HEIGHT = 240;
+// Stroke widths in viewBox units, centered on the path edge; "bold" is the
+// heavier white outline the dialogs wear
+export type LogoOutline = boolean | "bold";
+const outerStroke = (outline: LogoOutline) => (outline === "bold" ? 64 : 44);
+const INNER_STROKE = 20;
+// Room for the half of the outer stroke that lies outside the artwork
+const outlinePad = (outline: LogoOutline) =>
+  outline ? outerStroke(outline) / 2 + 18 : 0;
+
+const SHADOW_PATH = `M492.518,106.594c-2.729-2.729-5.73-4.093-9.005-4.093c-19.647-0.182-35.382,5.776-47.206,17.873
 	c-5.003,5.094-8.959,10.733-11.87,16.918c-4.002,8.732-6.003,18.646-6.003,29.743c0.091,11.37,3.093,21.238,9.005,29.606
 	c1.455,3.456,3.32,6.685,5.594,9.687l6.685,7.367c2.274,2.274,4.866,4.275,7.777,6.003l7.777,3.957
 	c1.273,0.546,2.592,1.046,3.957,1.501c8.095,2.547,16.963,3.365,26.605,2.456c9.641-1.001,18.328-3.365,26.059-7.095
@@ -164,11 +153,9 @@ const Logo = ({
 	c2.547-1.637,4.912-3.593,7.095-5.867c8.277-7.913,12.279-17.282,12.006-28.105c-0.455-11.006-5.003-20.374-13.643-28.105
 	c-4.912-4.457-11.188-8.141-18.828-11.051c0.637-0.182,1.273-0.364,1.91-0.546h0.273c3.456-0.91,6.503-2.274,9.141-4.093
 	c0.455-0.364,0.864-0.682,1.228-0.955l13.098-9.414l0.273-0.273c0.182-0.182,0.364-0.318,0.546-0.409
-	c1.819-1.455,2.456-3.229,1.91-5.321l-0.137-0.136C1180.555,111.551,1177.236,105.366,1171.96,100.728z"
-    />
-    <Path
-      fill={textSecondaryColor || "#BD852B"}
-      d="M451.861,170.036l-0.136-6.549c-1.091,0.728-2.137,1.455-3.138,2.183
+	c1.819-1.455,2.456-3.229,1.91-5.321l-0.137-0.136C1180.555,111.551,1177.236,105.366,1171.96,100.728z`;
+
+const SECONDARY_PATH = `M451.861,170.036l-0.136-6.549c-1.091,0.728-2.137,1.455-3.138,2.183
 	c-8.914,6.276-17.009,13.371-24.285,21.284c-0.273-0.364-0.5-0.728-0.682-1.091c1.455,3.547,3.32,6.867,5.594,9.96l6.822,7.504
 	c2.365,2.274,5.048,4.32,8.05,6.14l7.913,3.957c1.273,0.546,2.638,1.046,4.093,1.501c8.186,2.638,17.236,3.502,27.15,2.592
 	c9.823-1.001,18.692-3.411,26.605-7.231c2.547-0.819,4.275-2.911,5.185-6.276c1.091-4.093,0.91-9.096-0.546-15.008
@@ -334,11 +321,9 @@ const Logo = ({
 	c3.001,1.182,4.684,2.592,5.048,4.229c0,0.091,0.045,0.227,0.136,0.409c0.091,0.364,0.228,0.773,0.409,1.228
 	c0.455,1.819,1.865,3.411,4.229,4.775h0.136c2.456,1.273,5.366,1.364,8.732,0.273c2.001-0.637,3.365-1.592,4.093-2.865
 	c0.728-1.273,0.773-2.911,0.136-4.912c-0.637-1.91-2.638-3.502-6.003-4.775c-6.913-2.456-13.78-4.502-20.602-6.14
-	c-6.64-1.819-12.825-5.185-18.555-10.096c-3.638-3.638-6.458-8.232-8.459-13.78C1098.331,125.831,1098.104,118.6,1099.65,109.869z"
-    />
-    <Path
-      fill={textPrimaryColor || "#FFD669"}
-      d="M490.062,93.906c-2.82-2.82-5.912-4.229-9.277-4.229c-20.01-0.182-36.064,5.912-48.161,18.282
+	c-6.64-1.819-12.825-5.185-18.555-10.096c-3.638-3.638-6.458-8.232-8.459-13.78C1098.331,125.831,1098.104,118.6,1099.65,109.869z`;
+
+const PRIMARY_PATH = `M490.062,93.906c-2.82-2.82-5.912-4.229-9.277-4.229c-20.01-0.182-36.064,5.912-48.161,18.282
 	c-5.094,5.184-9.141,10.96-12.143,17.327c-4.093,8.914-6.14,19.01-6.14,30.288c0.091,11.642,3.184,21.738,9.278,30.288
 	c0.182,0.364,0.409,0.728,0.682,1.091c7.277-7.913,15.372-15.008,24.285-21.284c1.001-0.728,2.047-1.455,3.138-2.183l0.136,6.549
 	c-6.913,7.004-13.78,15.19-20.602,24.558c2.456,2.365,5.23,4.457,8.322,6.276c4.639-6.367,9.778-12.37,15.417-18.009
@@ -499,9 +484,77 @@ const Logo = ({
 	c0.091,0.546,0.5,1.137,1.228,1.774c0.637,0.637,1.365,0.955,2.183,0.955h0.136c1.91,0.091,4.911-0.091,9.005-0.546h0.273
 	c2.911-0.182,5.912-0.591,9.005-1.228c0.818-0.273,1.682-0.546,2.592-0.819h0.273c3.547-0.91,6.64-2.228,9.277-3.957l0.273-0.273
 	c0.182-0.182,0.364-0.318,0.546-0.409c1.91-1.546,2.592-3.365,2.047-5.457l-0.137-0.136
-	C1192.744,98.954,1189.333,92.632,1183.966,87.903z"
-    />
-  </Svg>
-);
+	C1192.744,98.954,1189.333,92.632,1183.966,87.903z`;
+
+const PATHS = [SHADOW_PATH, SECONDARY_PATH, PRIMARY_PATH];
+
+// Rendered height for a given width, keeping the artwork's aspect ratio
+export const logoHeight = (width: number, outline: LogoOutline = false) => {
+  const pad = outlinePad(outline);
+  return (width * (ART_HEIGHT + pad * 2)) / (ART_WIDTH + pad * 2);
+};
+
+interface LogoProps {
+  width?: number | string;
+  // Follows the artwork's aspect ratio when omitted and width is a number
+  height?: number | string;
+  // Sticker outline — a white outer and dark inner stroke beneath the fills,
+  // the same double border the buttons wear — so the logo reads on busy
+  // backgrounds
+  outline?: LogoOutline;
+  textPrimaryColor?: string;
+  textSecondaryColor?: string;
+  shadowColor?: string;
+  style?: SvgProps["style"];
+}
+
+const Logo = ({
+  width,
+  height,
+  outline = false,
+  textPrimaryColor,
+  textSecondaryColor,
+  shadowColor,
+  style,
+}: LogoProps) => {
+  const pad = outlinePad(outline);
+  const viewBoxWidth = ART_WIDTH + pad * 2;
+  const viewBoxHeight = ART_HEIGHT + pad * 2;
+  const resolvedHeight =
+    height ??
+    (typeof width === "number" ? logoHeight(width, outline) : undefined);
+
+  return (
+    <Svg
+      title="Matchimals Logo"
+      width={width || "100%"}
+      height={resolvedHeight || "100%"}
+      style={style}
+      viewBox={`${-pad} ${-pad} ${viewBoxWidth} ${viewBoxHeight}`}
+    >
+      {outline
+        ? [
+            { color: "#fff", strokeWidth: outerStroke(outline) },
+            { color: colors.grayDark, strokeWidth: INNER_STROKE },
+          ].map(({ color, strokeWidth }) =>
+            PATHS.map((d, i) => (
+              <Path
+                key={`${color}-${i}`}
+                d={d}
+                fill={color}
+                stroke={color}
+                strokeWidth={strokeWidth}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
+            ))
+          )
+        : null}
+      <Path fill={shadowColor || "#2A1A12"} d={SHADOW_PATH} />
+      <Path fill={textSecondaryColor || "#BD852B"} d={SECONDARY_PATH} />
+      <Path fill={textPrimaryColor || "#FFD669"} d={PRIMARY_PATH} />
+    </Svg>
+  );
+};
 
 export default Logo;
