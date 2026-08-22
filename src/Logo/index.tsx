@@ -5,17 +5,15 @@ import type { SvgProps } from "react-native-svg";
 import { colors } from "../constants/colors";
 
 // The artwork's bounds. The sticker outline strokes reach past them, so the
-// viewBox grows by outlinePad() on every side when `outline` is set.
+// viewBox grows by outlinePad() on every side.
 const ART_WIDTH = 1224;
 const ART_HEIGHT = 240;
-// Stroke widths in viewBox units, centered on the path edge; "bold" is the
+// Stroke widths in viewBox units, centered on the path edge; bold is the
 // heavier white outline the dialogs wear
-export type LogoOutline = boolean | "bold";
-const outerStroke = (outline: LogoOutline) => (outline === "bold" ? 64 : 44);
+const outerStroke = (bold: boolean) => (bold ? 64 : 44);
 const INNER_STROKE = 20;
 // Room for the half of the outer stroke that lies outside the artwork
-const outlinePad = (outline: LogoOutline) =>
-  outline ? outerStroke(outline) / 2 + 18 : 0;
+const outlinePad = (bold: boolean) => outerStroke(bold) / 2 + 18;
 
 const SHADOW_PATH = `M492.518,106.594c-2.729-2.729-5.73-4.093-9.005-4.093c-19.647-0.182-35.382,5.776-47.206,17.873
 	c-5.003,5.094-8.959,10.733-11.87,16.918c-4.002,8.732-6.003,18.646-6.003,29.743c0.091,11.37,3.093,21.238,9.005,29.606
@@ -489,8 +487,8 @@ const PRIMARY_PATH = `M490.062,93.906c-2.82-2.82-5.912-4.229-9.277-4.229c-20.01-
 const PATHS = [SHADOW_PATH, SECONDARY_PATH, PRIMARY_PATH];
 
 // Rendered height for a given width, keeping the artwork's aspect ratio
-export const logoHeight = (width: number, outline: LogoOutline = false) => {
-  const pad = outlinePad(outline);
+export const logoHeight = (width: number, bold = false) => {
+  const pad = outlinePad(bold);
   return (width * (ART_HEIGHT + pad * 2)) / (ART_WIDTH + pad * 2);
 };
 
@@ -498,10 +496,8 @@ interface LogoProps {
   width?: number | string;
   // Follows the artwork's aspect ratio when omitted and width is a number
   height?: number | string;
-  // Sticker outline — a white outer and dark inner stroke beneath the fills,
-  // the same double border the buttons wear — so the logo reads on busy
-  // backgrounds
-  outline?: LogoOutline;
+  // The heavier outline the dialogs wear
+  bold?: boolean;
   textPrimaryColor?: string;
   textSecondaryColor?: string;
   shadowColor?: string;
@@ -511,18 +507,17 @@ interface LogoProps {
 const Logo = ({
   width,
   height,
-  outline = false,
+  bold = false,
   textPrimaryColor,
   textSecondaryColor,
   shadowColor,
   style,
 }: LogoProps) => {
-  const pad = outlinePad(outline);
+  const pad = outlinePad(bold);
   const viewBoxWidth = ART_WIDTH + pad * 2;
   const viewBoxHeight = ART_HEIGHT + pad * 2;
   const resolvedHeight =
-    height ??
-    (typeof width === "number" ? logoHeight(width, outline) : undefined);
+    height ?? (typeof width === "number" ? logoHeight(width, bold) : undefined);
 
   return (
     <Svg
@@ -532,24 +527,24 @@ const Logo = ({
       style={style}
       viewBox={`${-pad} ${-pad} ${viewBoxWidth} ${viewBoxHeight}`}
     >
-      {outline
-        ? [
-            { color: "#fff", strokeWidth: outerStroke(outline) },
-            { color: colors.grayDark, strokeWidth: INNER_STROKE },
-          ].map(({ color, strokeWidth }) =>
-            PATHS.map((d, i) => (
-              <Path
-                key={`${color}-${i}`}
-                d={d}
-                fill={color}
-                stroke={color}
-                strokeWidth={strokeWidth}
-                strokeLinejoin="round"
-                strokeLinecap="round"
-              />
-            ))
-          )
-        : null}
+      {/* Sticker outline: a white outer and dark inner stroke beneath the
+          fills — the same double border the buttons wear */}
+      {[
+        { color: "#fff", strokeWidth: outerStroke(bold) },
+        { color: colors.grayDark, strokeWidth: INNER_STROKE },
+      ].map(({ color, strokeWidth }) =>
+        PATHS.map((d, i) => (
+          <Path
+            key={`-`}
+            d={d}
+            fill={color}
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+        ))
+      )}
       <Path fill={shadowColor || "#2A1A12"} d={SHADOW_PATH} />
       <Path fill={textSecondaryColor || "#BD852B"} d={SECONDARY_PATH} />
       <Path fill={textPrimaryColor || "#FFD669"} d={PRIMARY_PATH} />

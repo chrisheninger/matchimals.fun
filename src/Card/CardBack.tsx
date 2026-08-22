@@ -7,17 +7,16 @@ import { cardHeight, cardWidth } from "../constants/board";
 import Logo from "../Logo";
 
 interface CardBackProps {
-  height?: number;
+  // The deck only ever shows the few backs directly under the top card; the
+  // rest skip the logo so a tall deck doesn't mount hundreds of SVG paths
+  logo?: boolean;
   style?: StyleProp<ViewStyle>;
-  width?: number;
 }
 
-const CardBack = ({ height, style, width }: CardBackProps) => (
+const CardBack = ({ logo = true, style }: CardBackProps) => (
   <View style={[styles.root, style]}>
     <ImageBackground source={CardBackground} style={styles.root}>
-      <View>
-        <Logo width={80} />
-      </View>
+      {logo ? <Logo width={84} /> : null}
     </ImageBackground>
   </View>
 );

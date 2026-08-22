@@ -83,7 +83,7 @@ const Menu = ({
         <Reanimated.View
           style={[logoStyle, { marginBottom: tight ? 12 : compact ? 20 : 48 }]}
         >
-          <Logo outline width={tight ? 260 : compact ? 320 : 420} />
+          <Logo width={tight ? 260 : compact ? 320 : 420} />
         </Reanimated.View>
         <Text
           style={[
