@@ -49,6 +49,19 @@ const Menu = ({
 
   const [showSettings, setShowSettings] = useState(false);
 
+  // The dialog wears its own sticker logo, so this one steps aside while
+  // Settings (and the icon chooser stacked on it) is open — the timings match
+  // the dialog's own fade
+  const logoOpacity = useSharedValue(1);
+  useEffect(() => {
+    logoOpacity.value = withTiming(showSettings ? 0 : 1, {
+      duration: showSettings ? 240 : 180,
+    });
+  }, [showSettings, logoOpacity]);
+  const logoStyle = useAnimatedStyle(() => ({
+    opacity: logoOpacity.value,
+  }));
+
   const captionOpacity = useSharedValue(0);
   useEffect(() => {
     captionOpacity.value = 0;
@@ -67,11 +80,11 @@ const Menu = ({
           { paddingTop: insets.top, paddingBottom: insets.bottom },
         ]}
       >
-        <Logo
-          outline
-          width={tight ? 260 : compact ? 320 : 420}
-          style={{ marginBottom: tight ? 12 : compact ? 20 : 48 }}
-        />
+        <Reanimated.View
+          style={[logoStyle, { marginBottom: tight ? 12 : compact ? 20 : 48 }]}
+        >
+          <Logo outline width={tight ? 260 : compact ? 320 : 420} />
+        </Reanimated.View>
         <Text
           style={[
             styles.text,

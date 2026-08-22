@@ -3,23 +3,22 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import AppIconChooser from "../AppIconChooser";
 import AppIconTile from "../AppIconChooser/AppIconTile";
-import Button from "../Button";
 import Dialog from "../Dialog";
+import DoneButton from "../Dialog/DoneButton";
+import Title from "../Dialog/Title";
 import { useMusic } from "../Music";
 import Switch from "../Switch";
 import { colors } from "../constants/colors";
 import { canChangeAppIcon, useAppIcon } from "../hooks/appIcon";
-import type { PlayerId } from "../hooks/players";
 
 interface SettingsProps {
   isVisible: boolean;
   hide: () => void;
-  player?: PlayerId;
 }
 
 // Music and sound-effect switches, plus the app-icon picker where the
 // platform supports alternate icons. Reached from both menus.
-const Settings = ({ isVisible, hide, player }: SettingsProps) => {
+const Settings = ({ isVisible, hide }: SettingsProps) => {
   const music = useMusic();
   const { appIcon, setAppIcon } = useAppIcon();
   // The chooser opens on top of this dialog, so a pick lands back here
@@ -27,13 +26,8 @@ const Settings = ({ isVisible, hide, player }: SettingsProps) => {
 
   return (
     <>
-      <Dialog
-        player={player}
-        isVisible={isVisible}
-        hide={hide}
-        style={{ maxWidth: 360 }}
-      >
-        <Text style={styles.title}>SETTINGS</Text>
+      <Dialog isVisible={isVisible} hide={hide} style={{ maxWidth: 360 }}>
+        <Title>SETTINGS</Title>
         <View style={styles.row}>
           <Text style={styles.label}>Music</Text>
           <Switch
@@ -64,9 +58,7 @@ const Settings = ({ isVisible, hide, player }: SettingsProps) => {
             </View>
           </Pressable>
         ) : null}
-        <Button color="#fff" onPress={hide} style={styles.done}>
-          DONE
-        </Button>
+        <DoneButton onPress={hide} />
       </Dialog>
       {canChangeAppIcon ? (
         <AppIconChooser
@@ -74,7 +66,6 @@ const Settings = ({ isVisible, hide, player }: SettingsProps) => {
           hide={() => setShowAppIconChooser(false)}
           value={appIcon}
           onChange={setAppIcon}
-          player={player}
         />
       ) : null}
     </>
@@ -82,14 +73,6 @@ const Settings = ({ isVisible, hide, player }: SettingsProps) => {
 };
 
 const styles = StyleSheet.create({
-  title: {
-    color: colors.grayDark,
-    fontFamily: "Dimbo",
-    fontSize: 32,
-    lineHeight: 40,
-    textAlign: "center",
-    marginBottom: 8,
-  },
   // Fill the card; the minimum keeps a comfortable gap between label and switch
   // when the card hugs its content
   // Labels start, and the icon tile ends, on the 4pt white border line of the
@@ -108,9 +91,6 @@ const styles = StyleSheet.create({
   },
   tile: {
     marginRight: 4,
-  },
-  done: {
-    marginTop: 16,
   },
   label: {
     color: colors.grayDark,

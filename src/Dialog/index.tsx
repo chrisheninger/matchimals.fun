@@ -11,22 +11,12 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Portal } from "../Overlay";
-import Animals from "../Animals";
-import { usePlayerConfig } from "../hooks/players";
+import Header, { HEADER_CLEARANCE, HEADER_OVERHANG } from "./Header";
 import type { DialogProps } from "./types";
 
-const Dialog = ({
-  children,
-  isVisible,
-  hide,
-  player = 0,
-  style,
-}: DialogProps) => {
+const Dialog = ({ children, isVisible, hide, style }: DialogProps) => {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
-  const { playerConfig } = usePlayerConfig();
-  const Icon = Animals[playerConfig[player].animal];
-  const backgroundColor = playerConfig[player].color;
 
   // Keep the dialog mounted while it animates out, then unmount it. `progress`
   // drives both the backdrop fade and the card's slide-up via the native driver.
@@ -82,28 +72,22 @@ const Dialog = ({
           style={[
             styles.dialog,
             {
-              marginTop: insets.top + 60,
-              marginBottom: insets.bottom,
+              marginTop: insets.top + HEADER_OVERHANG + 16,
+              marginBottom: insets.bottom + 16,
               // Cap the card so tall content scrolls instead of overflowing
-              // the screen (the web variant caps at calc(100vh - 120px)); the
-              // extra 60 leaves room for the animal badge poking out the top.
-              maxHeight: height - insets.top - insets.bottom - 120,
+              // the screen (the web variant caps with calc()); the overhang
+              // leaves room for the logo poking out the top.
+              maxHeight:
+                height - insets.top - insets.bottom - HEADER_OVERHANG - 32,
             },
             { transform: [{ translateY }] },
             style,
           ]}
         >
-          <ScrollView contentContainerStyle={{ paddingTop: 60 }}>
+          <ScrollView contentContainerStyle={{ paddingTop: HEADER_CLEARANCE }}>
             {children}
           </ScrollView>
-          <View
-            style={[
-              styles.animal,
-              { backgroundColor: backgroundColor || "gray" },
-            ]}
-          >
-            <Icon width={80} height={80} />
-          </View>
+          <Header />
         </Animated.View>
       </Animated.View>
     </Portal>
@@ -135,20 +119,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 16,
     padding: 8,
-  },
-  animal: {
-    position: "absolute",
-    top: -60,
-    left: "50%",
-    marginLeft: -52, // account for border
-    flexShrink: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 8,
-    borderColor: "#fff",
   },
 });
 

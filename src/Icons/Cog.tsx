@@ -38,7 +38,7 @@ const GEAR_PATH = [
 
 // A settings cog in the same flat style as the audio icons; the round-joined
 // stroke softens the tooth corners
-const CogIcon = ({ size = 32 }: CogIconProps) => (
+const CogIcon = ({ size = 28 }: CogIconProps) => (
   <Svg title="Settings" width={size} height={size} viewBox="0 0 32 32">
     <Path
       fill={colors.grayDark}
