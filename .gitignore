@@ -22,5 +22,3 @@ npm-debug.log
 .metro-health-check*
 
 .env
-*.p8
-fastlane-api-key.json

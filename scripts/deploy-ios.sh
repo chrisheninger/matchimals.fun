@@ -6,14 +6,17 @@
 #
 # Pipeline: guardrails → bump ios.buildNumber in app.json (+ commit) →
 # expo prebuild → xcodebuild archive → xcodebuild -exportArchive with
-# destination:upload (sends the build to App Store Connect) → git tag.
+# destination:upload (sends the build to App Store Connect) → tag + push.
 #
-# Authentication: an App Store Connect API key (.env + ~/.appstoreconnect, see
-# the README) lets xcodebuild work headlessly; without one it relies on the
-# Apple ID signed into Xcode, which also works for a team you own.
+# Signing and the upload rely on the Apple ID signed into Xcode (Settings →
+# Accounts) for the team in app.json — the archive is signed with the Apple
+# Development identity and -exportArchive re-signs it with Apple Distribution,
+# minting certificates and profiles as needed. Nothing secret lives in the repo
+# or on disk.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 
 err() {
   echo "✖ $1" >&2
@@ -29,27 +32,6 @@ branch=$(git rev-parse --abbrev-ref HEAD)
 echo "▸ Typechecking…"
 bun run typecheck
 
-# --- Credentials (optional) ---------------------------------------------------
-
-AUTH_ARGS=()
-if [[ -f .env ]]; then
-  set -a
-  source .env
-  set +a
-fi
-if [[ -n "${ASC_KEY_ID:-}" && -n "${ASC_ISSUER_ID:-}" ]]; then
-  ASC_KEY_PATH="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
-  [[ -f "$ASC_KEY_PATH" ]] || err "ASC_KEY_ID is set but $ASC_KEY_PATH is missing."
-  AUTH_ARGS=(
-    -authenticationKeyPath "$ASC_KEY_PATH"
-    -authenticationKeyID "$ASC_KEY_ID"
-    -authenticationKeyIssuerID "$ASC_ISSUER_ID"
-  )
-  echo "▸ Authenticating with App Store Connect API key ${ASC_KEY_ID}"
-else
-  echo "▸ No App Store Connect API key — using the Apple ID signed into Xcode"
-fi
-
 # --- Bump build number (app.json is the CNG source of truth) -----------------
 
 BUILD_NUMBER=$(bun -e '
@@ -63,7 +45,7 @@ BUILD_NUMBER=$(bun -e '
 VERSION=$(bun -e 'console.log((await Bun.file("app.json").json()).expo.version)')
 TEAM_ID=$(bun -e 'console.log((await Bun.file("app.json").json()).expo.ios.appleTeamId)')
 
-echo "▸ Deploying Matchimals ${VERSION} (build ${BUILD_NUMBER})"
+echo "▸ Deploying Matchimals ${VERSION} (build ${BUILD_NUMBER}) as team ${TEAM_ID}"
 git add app.json
 git commit -m "chore: bump iOS build number to ${BUILD_NUMBER}"
 
@@ -88,10 +70,12 @@ xcodebuild -workspace ios/Matchimals.xcworkspace \
   -archivePath "$ARCHIVE_PATH" \
   archive \
   -allowProvisioningUpdates \
-  ${AUTH_ARGS[@]+"${AUTH_ARGS[@]}"}
+  DEVELOPMENT_TEAM="$TEAM_ID" \
+  CODE_SIGN_IDENTITY="Apple Development"
 
 # --- Export & upload to App Store Connect ------------------------------------
 
+mkdir -p build
 cat > build/ExportOptions.plist <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -103,8 +87,6 @@ cat > build/ExportOptions.plist <<EOF
   <string>upload</string>
   <key>teamID</key>
   <string>${TEAM_ID}</string>
-  <key>signingStyle</key>
-  <string>automatic</string>
   <key>uploadSymbols</key>
   <true/>
   <key>manageAppVersionAndBuildNumber</key>
@@ -118,13 +100,12 @@ xcodebuild -exportArchive \
   -archivePath "$ARCHIVE_PATH" \
   -exportOptionsPlist build/ExportOptions.plist \
   -exportPath build/export \
-  -allowProvisioningUpdates \
-  ${AUTH_ARGS[@]+"${AUTH_ARGS[@]}"}
+  -allowProvisioningUpdates
 
-# --- Tag ----------------------------------------------------------------------
+# --- Tag & push ---------------------------------------------------------------
 
 TAG="ios-v${VERSION}-${BUILD_NUMBER}"
 git tag "$TAG"
+git push origin main --follow-tags
 
-echo "✔ Uploaded build ${BUILD_NUMBER} — it will appear in TestFlight once Apple finishes processing."
-echo "  Tagged ${TAG}. Don't forget: git push --follow-tags"
+echo "✔ Uploaded build ${BUILD_NUMBER} (tagged ${TAG}) — it will appear in TestFlight once Apple finishes processing."

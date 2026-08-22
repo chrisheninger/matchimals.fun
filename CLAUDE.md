@@ -29,7 +29,7 @@ Lint: `.eslintrc` extends `@react-native`; `lint-staged` runs prettier on commit
 
 ## Continuous native generation
 
-The `ios/` directory is **generated** from `app.json` (and the config plugins) — it is not the source of truth and is gitignored. Never hand-edit native iOS files expecting changes to persist; edit `app.json` or a config plugin and re-run `bun run prebuild`. Building requires Xcode + CocoaPods. Releases are built locally (no paid EAS): `bun run deploy:ios` auto-increments `ios.buildNumber`, archives, and uploads to TestFlight (needs an App Store Connect API key — see README "Deploying to TestFlight"); bump `version` in `app.json` manually for new releases. See the build-philosophy memory: no fastlane, no paid EAS.
+The `ios/` directory is **generated** from `app.json` (and the config plugins) — it is not the source of truth and is gitignored. Never hand-edit native iOS files expecting changes to persist; edit `app.json` or a config plugin and re-run `bun run prebuild`. Building requires Xcode + CocoaPods. Releases are built locally (no paid EAS): `bun run deploy:ios` auto-increments `ios.buildNumber`, archives, and uploads to TestFlight (signing and upload use the Apple ID signed into Xcode — see README "Deploying to TestFlight"); bump `version` in `app.json` manually for new releases. See the build-philosophy memory: no fastlane, no paid EAS.
 
 `plugins/withFirebaseNoAdId.js` is a custom dangerous-mod plugin that prepends `$RNFirebaseAnalyticsWithoutAdIdSupport=true` to the Podfile so AdSupport.framework isn't linked (keeps the App Store privacy declaration clean). `plugins/withAnimalAppIcons.js` copies `assets/app-icons/animals/*.appiconset` into the asset catalog and lists them in `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` so iOS offers them as alternate app icons.
 
@@ -49,7 +49,7 @@ The `ios/` directory is **generated** from `app.json` (and the config plugins) �
 
 ## Conventions
 
-- **This is a public GitHub repo.** Before every commit, review the diff for anything private — credentials, API key IDs, tokens, personal info, internal URLs. Secrets belong only in `.env` (gitignored) and `~/.appstoreconnect/`; never in tracked files, commit messages, or PR descriptions.
+- **This is a public GitHub repo.** Before every commit, review the diff for anything private — credentials, API key IDs, tokens, personal info, internal URLs. Nothing secret is needed on disk for releases; never put credentials in tracked files, commit messages, or PR descriptions.
 - Prettier (default config, `.prettierrc`) — let `bun run format` handle style; don't hand-format.
 - Comments only where they explain what the code can't (constraints, invariants, non-obvious "why"). Never change-relative: no references to previous behavior or why the new way differs from the old — the codebase is forward-looking; git history is the changelog.
 - Components are folders with an `index.tsx`; assets (png/jpg/svg/mp4) live beside the component that uses them. Asset imports are declared in `src/declarations.d.ts`.
