@@ -75,8 +75,8 @@ const Dialog = ({ children, isVisible, hide, style }: DialogProps) => {
               marginTop: insets.top + HEADER_OVERHANG + 16,
               marginBottom: insets.bottom + 16,
               // Cap the card so tall content scrolls instead of overflowing
-              // the screen (the web variant caps with calc()); the overhang
-              // leaves room for the logo poking out the top.
+              // the screen; the overhang leaves room for the logo poking out
+              // the top.
               maxHeight:
                 height - insets.top - insets.bottom - HEADER_OVERHANG - 32,
             },
