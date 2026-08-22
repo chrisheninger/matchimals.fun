@@ -54,7 +54,7 @@ bun run deploy:ios
 
 The script (`scripts/deploy-ios.sh`) auto-increments `ios.buildNumber` in `app.json` (and commits the bump), runs `expo prebuild`, archives with `xcodebuild`, uploads the build straight to App Store Connect, and tags the commit (`ios-v<version>-<build>`). It refuses to run unless you're on a clean `main` and the typecheck passes. App version bumps (`expo.version`) are still manual — edit `app.json` before deploying a new release.
 
-One-time setup (credentials never leave your machine — nothing secret is committed):
+Authentication is optional: with no API key the script uses the Apple ID signed into Xcode (fine for a team you own). For headless runs, set up an App Store Connect API key (credentials never leave your machine — nothing secret is committed):
 
 1. In [App Store Connect](https://appstoreconnect.apple.com) → Users and Access → Integrations → App Store Connect API, generate a **Team key** with the **App Manager** role. Note the Key ID and Issuer ID.
 2. `mkdir -p ~/.appstoreconnect/private_keys` and move the downloaded `AuthKey_<KEYID>.p8` there.
