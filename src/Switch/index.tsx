@@ -10,6 +10,7 @@ import Reanimated, {
 } from "react-native-reanimated";
 
 import { colors } from "../constants/colors";
+import { haptics } from "../haptics";
 
 const WIDTH = 96;
 const HEIGHT = 56;
@@ -48,7 +49,10 @@ const Switch = ({ value, onChange, ...rest }: SwitchProps) => {
     <Pressable
       accessibilityRole="switch"
       accessibilityState={{ checked: value }}
-      onPress={() => onChange(!value)}
+      onPress={() => {
+        onChange(!value);
+        haptics.select();
+      }}
       {...rest}
     >
       <Reanimated.View style={[styles.track, trackStyle]}>

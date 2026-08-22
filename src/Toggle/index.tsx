@@ -9,6 +9,7 @@ import Reanimated, {
 } from "react-native-reanimated";
 
 import { colors } from "../constants/colors";
+import { haptics } from "../haptics";
 
 const SEGMENT_WIDTH = 150;
 const SEGMENT_HEIGHT = 56;
@@ -60,7 +61,12 @@ const Toggle = <T extends string>({
           <Pressable
             key={option.value}
             style={styles.segment}
-            onPress={() => onChange(option.value)}
+            onPress={() => {
+              if (option.value !== value) {
+                haptics.select();
+                onChange(option.value);
+              }
+            }}
           >
             <Text
               style={[

@@ -3,14 +3,27 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { TouchableOpacityProps } from "react-native";
 
 import { colors } from "../constants/colors";
+import { haptics } from "../haptics";
 
 interface CircleButtonProps extends TouchableOpacityProps {
   color?: string;
 }
 
-const CircleButton = ({ children, color, ...rest }: CircleButtonProps) => {
+const CircleButton = ({
+  children,
+  color,
+  onPress,
+  ...rest
+}: CircleButtonProps) => {
   return (
-    <TouchableOpacity activeOpacity={0.8} {...rest}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={(event) => {
+        haptics.tap();
+        onPress?.(event);
+      }}
+      {...rest}
+    >
       <View
         style={[
           styles.button,

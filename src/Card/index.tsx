@@ -15,6 +15,7 @@ import { cardHeight, cardWidth } from "../constants/board";
 import type { Card as CardType } from "../constants/cards";
 import CardBack from "./CardBack";
 import CardFront from "./CardFront";
+import { haptics } from "../haptics";
 
 // How much the card grows when picked up. The FlyingCard overlay starts its
 // flight at this scale so it matches the dragged card exactly.
@@ -103,6 +104,7 @@ const Card = ({
   // the center is unaffected even if it has already applied).
   const startDrag = useCallback(() => {
     setDragging(true);
+    haptics.pickup();
     baseMeasured.current = false;
     cardRef.current?.measureInWindow((pageX, pageY, width, height) => {
       baseCenterX.value = pageX + width / 2;
