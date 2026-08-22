@@ -2,9 +2,11 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { ReactNode } from "react";
 import type { TouchableOpacityProps } from "react-native";
+import Reanimated from "react-native-reanimated";
 
 import { colors } from "../constants/colors";
 import { haptics } from "../haptics";
+import { usePressScale } from "../hooks/pressScale";
 
 interface ButtonProps extends TouchableOpacityProps {
   color?: string;
@@ -12,22 +14,46 @@ interface ButtonProps extends TouchableOpacityProps {
   icon?: ReactNode;
 }
 
-const Button = ({ children, color, icon, onPress, ...rest }: ButtonProps) => {
+const Button = ({
+  children,
+  color,
+  icon,
+  onPress,
+  onPressIn,
+  onPressOut,
+  ...rest
+}: ButtonProps) => {
+  const press = usePressScale();
+
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
+      activeOpacity={0.9}
       onPress={(event) => {
         haptics.tap();
         onPress?.(event);
       }}
+      onPressIn={(event) => {
+        press.onPressIn();
+        onPressIn?.(event);
+      }}
+      onPressOut={(event) => {
+        press.onPressOut();
+        onPressOut?.(event);
+      }}
       {...rest}
     >
-      <View style={[styles.button, color && { backgroundColor: color }]}>
+      <Reanimated.View
+        style={[
+          styles.button,
+          color && { backgroundColor: color },
+          press.style,
+        ]}
+      >
         <View style={styles.buttonInner}>
           <Text style={styles.buttonText}>{children}</Text>
           {icon ? <View>{icon}</View> : null}
         </View>
-      </View>
+      </Reanimated.View>
     </TouchableOpacity>
   );
 };

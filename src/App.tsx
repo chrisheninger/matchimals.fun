@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Client } from "boardgame.io/react-native";
 import { colors } from "./constants/colors";
 
@@ -13,6 +14,8 @@ import MainMenu from "./MainMenu";
 import { MusicProvider } from "./Music";
 import { PlayerProvider } from "./hooks/players";
 import { OverlayProvider } from "./Overlay";
+
+const SCREEN_FADE = 200;
 
 export default function App() {
   const [isMainMenuVisible, setIsMainMenuVisible] = React.useState(true);
@@ -74,12 +77,18 @@ export default function App() {
     [handleIncrementGamesPlayed, setIsMainMenuVisible, setNumPlayers]
   );
 
-  const MatchimalsClient = Client({
-    board: Matchimals,
-    game: createGame(gameMode),
-    numPlayers,
-    debug: false,
-  });
+  // Memoized so re-renders of App don't mint a new component type, which
+  // would remount the board mid-game
+  const MatchimalsClient = useMemo(
+    () =>
+      Client({
+        board: Matchimals,
+        game: createGame(gameMode),
+        numPlayers,
+        debug: false,
+      }),
+    [gameMode, numPlayers]
+  );
 
   return (
     <GestureHandlerRootView style={styles.flex}>
@@ -89,14 +98,30 @@ export default function App() {
             <OverlayProvider>
               <View style={styles.root}>
                 <StatusBar hidden />
+                {/* The screens cross-fade: the leaving one stays mounted for
+                    the length of the fade, so both fill the root */}
                 {isMainMenuVisible ? (
-                  <MainMenu
-                    startGame={startGame}
-                    gameMode={gameMode}
-                    setGameMode={handleSetGameMode}
-                  />
+                  <Reanimated.View
+                    key="menu"
+                    style={StyleSheet.absoluteFill}
+                    entering={FadeIn.duration(SCREEN_FADE)}
+                    exiting={FadeOut.duration(SCREEN_FADE)}
+                  >
+                    <MainMenu
+                      startGame={startGame}
+                      gameMode={gameMode}
+                      setGameMode={handleSetGameMode}
+                    />
+                  </Reanimated.View>
                 ) : (
-                  <MatchimalsClient backToMainMenu={backToMainMenu} />
+                  <Reanimated.View
+                    key="game"
+                    style={StyleSheet.absoluteFill}
+                    entering={FadeIn.duration(SCREEN_FADE)}
+                    exiting={FadeOut.duration(SCREEN_FADE)}
+                  >
+                    <MatchimalsClient backToMainMenu={backToMainMenu} />
+                  </Reanimated.View>
                 )}
               </View>
             </OverlayProvider>
