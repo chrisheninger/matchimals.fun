@@ -26,13 +26,15 @@ import Menu from "../Menu";
 import Victory from "../Victory";
 import { isLegalMove } from "./game";
 import type { GameState } from "./game";
-import type { ScreenshotState } from "../screenshots";
+import { usePlayerConfig } from "../hooks/players";
+import { screenshotPlayers, snapshotForState } from "../screenshots";
+import type { BoardState } from "../screenshots";
 import { useMusic } from "../Music";
 
 type MatchimalsProps = BoardProps<GameState> & {
   backToMainMenu: () => void;
   // Screenshot mode only: the board state to jump to (see src/screenshots.ts)
-  snapshot?: Exclude<ScreenshotState, "menu">;
+  snapshot?: BoardState;
 };
 
 // Memoized so the urgent placement render can skip the nameplates (they take
@@ -71,16 +73,15 @@ const Matchimals = ({
   const music = useMusic();
   const tableRef = useRef<TableHandle>(null);
   const insets = useSafeAreaInsets();
+  const { setPlayerConfig } = usePlayerConfig();
 
   useEffect(() => {
     if (!snapshot) {
       return;
     }
-    if (snapshot === "victory") {
-      moves.restoreSnapshot("fourPlayerE", true);
-    } else {
-      moves.restoreSnapshot(snapshot);
-    }
+    const { id, finished } = snapshotForState(snapshot);
+    setPlayerConfig(screenshotPlayers);
+    moves.restoreSnapshot(id, finished);
     tableRef.current?.scrollToCenter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snapshot]);
