@@ -99,12 +99,14 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFill,
     alignItems: "center",
     justifyContent: "center",
+    // The gutter lives here rather than as a margin on the card: a stretched
+    // child capped by maxWidth sits at the cross-start instead of centering
+    paddingHorizontal: 16,
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   // The same card as Dialog, at the menu dialog's width
   card: {
-    alignSelf: "stretch",
-    marginHorizontal: 16,
+    width: "100%",
     maxWidth: 360,
     alignItems: "center",
     backgroundColor: "#fff",
