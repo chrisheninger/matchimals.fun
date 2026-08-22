@@ -484,7 +484,10 @@ const PRIMARY_PATH = `M490.062,93.906c-2.82-2.82-5.912-4.229-9.277-4.229c-20.01-
 	c0.182-0.182,0.364-0.318,0.546-0.409c1.91-1.546,2.592-3.365,2.047-5.457l-0.137-0.136
 	C1192.744,98.954,1189.333,92.632,1183.966,87.903z`;
 
-const PATHS = [SHADOW_PATH, SECONDARY_PATH, PRIMARY_PATH];
+// The outline strokes only the face and the shadow: the extrusion between them
+// adds nothing to the silhouette, and its hairline spikes (zero-width when
+// filled) would stroke into nubs on the edge
+const OUTLINE_PATHS = [SHADOW_PATH, PRIMARY_PATH];
 
 // Rendered height for a given width, keeping the artwork's aspect ratio
 export const logoHeight = (width: number, bold = false) => {
@@ -533,7 +536,7 @@ const Logo = ({
         { color: "#fff", strokeWidth: outerStroke(bold) },
         { color: colors.grayDark, strokeWidth: INNER_STROKE },
       ].map(({ color, strokeWidth }) =>
-        PATHS.map((d, i) => (
+        OUTLINE_PATHS.map((d, i) => (
           <Path
             key={`-`}
             d={d}
