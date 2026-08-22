@@ -2,6 +2,7 @@
   "expo": {
     "name": "Matchimals",
     "slug": "matchimals",
+    "scheme": "matchimals",
     "version": "2.0.0",
     "orientation": "default",
     "icon": "./assets/app-icons/Icon-App-1024x1024.png",

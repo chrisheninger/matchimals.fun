@@ -231,9 +231,14 @@ export function createGame(mode: GameMode): Game<GameState> {
         console.log("==> takeSnapshot", G);
       },
 
-      restoreSnapshot: ({ G }, id: keyof typeof snapshots) => {
+      restoreSnapshot: (
+        { G },
+        id: keyof typeof snapshots,
+        finished?: boolean
+      ) => {
         if (id) {
-          return snapshots[id];
+          // An empty deck ends the game on the spot (the victory screenshot)
+          return finished ? { ...snapshots[id], deck: [] } : snapshots[id];
         }
       },
 
