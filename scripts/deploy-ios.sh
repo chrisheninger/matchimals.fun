@@ -119,6 +119,6 @@ xcodebuild -exportArchive \
 
 TAG="ios-v${VERSION}-${BUILD_NUMBER}"
 git tag "$TAG"
-git push origin main --follow-tags
+git push origin main "$TAG"
 
 echo "✔ Uploaded build ${BUILD_NUMBER} (tagged ${TAG}) — it will appear in TestFlight once Apple finishes processing."
