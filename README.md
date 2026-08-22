@@ -7,8 +7,6 @@
 
 #### [🍎 Download for iOS from the App Store](https://itunes.apple.com/app/id1348821168)
 
-#### [🤖 Download for Android from the Google Play Store](https://play.google.com/store/apps/details?id=com.matchimals)
-
 #### [🖥 Play on desktop on the web](https://www.matchimals.fun/)
 
 <img src="./public/screenshots/screenshot-optimized.png" alt="screenshot of matchimals.fun game" />
@@ -31,7 +29,7 @@ This project is sponsored by [iGravity Studios](https://igravitystudios.com)–�
 
 This game has been made open source to help others looking to learn more about JavaScript, BoardGame.io, and React-Native applications.
 
-Find a bug or have a question? Feel free to [open an issue](https://github.com/igravitystudios/matchimals.fun/issues) or [submit a pull request](https://github.com/igravitystudios/matchimals.fun/pulls)!
+Find a bug or have a question? Feel free to [open an issue](https://github.com/chrisheninger/matchimals.fun/issues) or [submit a pull request](https://github.com/chrisheninger/matchimals.fun/pulls)!
 
 ### Development
 
@@ -67,5 +65,3 @@ The web version deploys automatically via Netlify when `main` is pushed (`bun ru
 [Nicolo Davis](https://github.com/nicolodavis) and collaborators for the turn-based game engine [boardgame.io](https://github.com/nicolodavis/boardgame.io).
 
 Facebook and collaborators for the wonderful libraries [React](https://reactjs.org/) and [React-Native](https://facebook.github.io/react-native/).
-
-[iGravity Studios](https://igravitystudios.com/) for publishing the game to the Apple App Store and Google Play Store.
