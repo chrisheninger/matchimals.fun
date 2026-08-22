@@ -92,4 +92,10 @@ for device in "${DEVICES[@]}"; do
   fi
 done
 
+if command -v magick >/dev/null; then
+  echo "▸ Recompressing PNGs losslessly…"
+  find "$OUT" -name '*.png' -exec magick {} -strip -define png:compression-level=9 \
+    -define png:compression-filter=5 -define png:compression-strategy=1 {} ;
+fi
+
 echo "▸ Done: $(find "$OUT" -name '*.png' | wc -l | tr -d ' ') screenshots in $OUT/"

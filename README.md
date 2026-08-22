@@ -9,7 +9,7 @@
 
 #### [🖥 Play on desktop on the web](https://www.matchimals.fun/)
 
-<img src="./public/screenshots/screenshot-optimized.png" alt="screenshot of matchimals.fun game" />
+<img src="./public/screenshots/screenshot-optimized.webp" alt="screenshot of matchimals.fun game" />
 
 ## How to play
 
@@ -42,7 +42,7 @@ This is an [Expo](https://expo.dev) app using [continuous native generation](htt
 
 The app icons are rendered from the animal SVGs: `bun run generate:icons` regenerates the primary icon, the per-animal alternate icons (pick one under Settings on iOS), and the web icons — commit the output.
 
-Screenshots for the App Store and this README come from the simulator: `bun run screenshots` builds a Release app, boots an iPhone and an iPad, drives the game through the main menu, every board snapshot in `src/Matchimals/snapshots.ts`, and the victory card via `https://www.matchimals.fun/?screenshot=<state>` universal links, and writes PNGs to `screenshots/` (gitignored). Add `--skip-build` to reuse the last build.
+Screenshots for the App Store and this README come from the simulator: `bun run screenshots` builds a Release app, boots an iPhone and an iPad, drives the game through the main menu, every board snapshot in `src/Matchimals/snapshots.ts`, and the victory card via `https://www.matchimals.fun/?screenshot=<state>` universal links, and writes PNGs to `screenshots/` — commit them; they are what gets uploaded to App Store Connect. Add `--skip-build` to reuse the last build.
 
 ### Deploying to TestFlight
 
