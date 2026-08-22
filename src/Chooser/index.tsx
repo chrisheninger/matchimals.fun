@@ -5,6 +5,7 @@ import type { TouchableOpacityProps } from "react-native";
 
 import { colors } from "../constants/colors";
 import { haptics } from "../haptics";
+import { displayFont } from "../i18n";
 
 // Shared by the animal and app-icon pickers so their grids match
 export const CHOOSER_TILE = 72;
@@ -50,7 +51,14 @@ export const ChooserItem = ({
     >
       {children}
     </TouchableOpacity>
-    <Text style={styles.name}>{label}</Text>
+    <Text
+      style={styles.name}
+      numberOfLines={1}
+      adjustsFontSizeToFit
+      minimumFontScale={0.7}
+    >
+      {label}
+    </Text>
   </View>
 );
 
@@ -73,9 +81,12 @@ const styles = StyleSheet.create({
   ringSelected: {
     borderColor: colors.yellowDark,
   },
+  // Long translated names shrink to the tile pitch (tile plus both margins)
+  // instead of running into the neighbour's label
   name: {
+    maxWidth: CHOOSER_TILE + 20,
     color: colors.grayDark,
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 20,
     lineHeight: 26,
     textAlign: "center",

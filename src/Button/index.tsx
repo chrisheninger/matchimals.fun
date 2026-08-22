@@ -7,6 +7,7 @@ import Reanimated from "react-native-reanimated";
 import { colors } from "../constants/colors";
 import { haptics } from "../haptics";
 import { usePressScale } from "../hooks/pressScale";
+import { displayFont } from "../i18n";
 
 interface ButtonProps extends TouchableOpacityProps {
   color?: string;
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   buttonText: {
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 32,
     color: colors.grayDark,
   },

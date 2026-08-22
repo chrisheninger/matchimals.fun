@@ -23,13 +23,15 @@ import Nameplate from "../Nameplate";
 import Table from "../Table";
 import type { TableHandle } from "../Table";
 import Menu from "../Menu";
+import AnimalChooser from "../AnimalChooser";
 import Victory from "../Victory";
 import { isLegalMove } from "./game";
 import type { GameState } from "./game";
 import { usePlayerConfig } from "../hooks/players";
-import { screenshotPlayers, snapshotForState } from "../screenshots";
+import { screenshotPlayersFor, snapshotForState } from "../screenshots";
 import type { BoardState } from "../screenshots";
 import { useMusic } from "../Music";
+import { t } from "../i18n";
 
 type MatchimalsProps = BoardProps<GameState> & {
   backToMainMenu: () => void;
@@ -80,9 +82,10 @@ const Matchimals = ({
       return;
     }
     const { id, finished } = snapshotForState(snapshot);
-    setPlayerConfig(screenshotPlayers);
+    setPlayerConfig(screenshotPlayersFor(snapshot));
     moves.restoreSnapshot(id, finished);
     tableRef.current?.scrollToCenter();
+    setShowMenu(snapshot === "gameMenu");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snapshot]);
 
@@ -252,7 +255,7 @@ const Matchimals = ({
           onArrived={onFlightArrived}
         />
         <CircleButton
-          accessibilityLabel="Pass"
+          accessibilityLabel={t("pass")}
           onPress={onGamePass}
           style={{
             position: "absolute",
@@ -263,7 +266,7 @@ const Matchimals = ({
           <SkipIcon size={32} />
         </CircleButton>
         <CircleButton
-          accessibilityLabel="Menu"
+          accessibilityLabel={t("menu")}
           onPress={() => setShowMenu(true)}
           style={{
             position: "absolute",
@@ -288,6 +291,9 @@ const Matchimals = ({
         isVisible={showMenu}
         hide={() => setShowMenu(false)}
       />
+      {snapshot === "animalChooser" ? (
+        <AnimalChooser isVisible hide={() => {}} player="0" />
+      ) : null}
     </>
   );
 };

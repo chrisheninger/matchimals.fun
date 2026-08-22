@@ -14,7 +14,11 @@ import MainMenu from "./MainMenu";
 import { MusicProvider } from "./Music";
 import { PlayerProvider } from "./hooks/players";
 import { OverlayProvider } from "./Overlay";
-import { playersForState, useScreenshotState } from "./screenshots";
+import {
+  isBoardState,
+  playersForState,
+  useScreenshotState,
+} from "./screenshots";
 
 const SCREEN_FADE = 200;
 
@@ -70,7 +74,7 @@ export default function App() {
     if (!screenshotState) {
       return;
     }
-    if (screenshotState === "menu") {
+    if (!isBoardState(screenshotState)) {
       setIsMainMenuVisible(true);
       return;
     }
@@ -125,6 +129,7 @@ export default function App() {
                       startGame={startGame}
                       gameMode={gameMode}
                       setGameMode={handleSetGameMode}
+                      settingsOpen={screenshotState === "settings"}
                     />
                   </Reanimated.View>
                 ) : (
@@ -134,10 +139,14 @@ export default function App() {
                     entering={FadeIn.duration(SCREEN_FADE)}
                     exiting={FadeOut.duration(SCREEN_FADE)}
                   >
+                    {/* Each screenshot state gets a fresh game: a finished
+                        game ignores further moves, including restoring the
+                        next snapshot */}
                     <MatchimalsClient
+                      key={screenshotState ?? "game"}
                       backToMainMenu={backToMainMenu}
                       snapshot={
-                        screenshotState && screenshotState !== "menu"
+                        screenshotState && isBoardState(screenshotState)
                           ? screenshotState
                           : undefined
                       }

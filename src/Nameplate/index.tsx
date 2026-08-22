@@ -11,6 +11,7 @@ import { usePlayerConfig } from "../hooks/players";
 import AnimalChooser from "../AnimalChooser";
 import { haptics } from "../haptics";
 import type { NameplateProps } from "./types";
+import { animalName, displayFont } from "../i18n";
 
 const Nameplate = ({
   player,
@@ -23,7 +24,7 @@ const Nameplate = ({
   const { playerConfig } = usePlayerConfig();
   const active = player === currentPlayer;
   const score = players[player]?.score;
-  const name = playerConfig[player]?.name;
+  const name = animalName(playerConfig[player]?.animal);
   const backgroundColor = playerConfig[player]?.color;
   const Icon = Animals[playerConfig[player]?.animal];
 
@@ -105,22 +106,23 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
   },
+  // Grows for the longer animal names some languages have
   details: {
-    width: 120,
+    minWidth: 120,
     height: 80,
     justifyContent: "center",
     paddingLeft: 16,
   },
   name: {
     color: "#17171b",
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 24,
     lineHeight: 30,
     marginTop: 4, // The line-height on this font is funky, this visually centers it
   },
   score: {
     color: "#17171b",
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 48,
     lineHeight: 60,
     marginTop: -6, // The line-height on this font is funky, this visually centers it

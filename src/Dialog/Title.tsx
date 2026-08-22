@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import type { TextProps } from "react-native";
 
 import { colors } from "../constants/colors";
+import { displayFont } from "../i18n";
 
 // The heading at the top of a dialog's content, underscored with the same
 // yellow the toggles and switches use
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.grayDark,
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 40,
     lineHeight: 48,
     textAlign: "center",

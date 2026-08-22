@@ -2,6 +2,7 @@ import React from "react";
 import Svg, { Path } from "svgs";
 
 import { colors } from "../constants/colors";
+import { t } from "../i18n";
 
 interface CogIconProps {
   size?: number;
@@ -39,7 +40,7 @@ const GEAR_PATH = [
 // A settings cog in the same flat style as the audio icons; the round-joined
 // stroke softens the tooth corners
 const CogIcon = ({ size = 28 }: CogIconProps) => (
-  <Svg title="Settings" width={size} height={size} viewBox="0 0 32 32">
+  <Svg title={t("settings")} width={size} height={size} viewBox="0 0 32 32">
     <Path
       fill={colors.grayDark}
       fillRule="evenodd"

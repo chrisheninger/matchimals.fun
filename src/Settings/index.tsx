@@ -16,6 +16,7 @@ import {
   setHapticsEnabled,
   useHapticsEnabled,
 } from "../haptics";
+import { animalName, caps, displayFont, t } from "../i18n";
 
 interface SettingsProps {
   isVisible: boolean;
@@ -34,28 +35,28 @@ const Settings = ({ isVisible, hide }: SettingsProps) => {
   return (
     <>
       <Dialog isVisible={isVisible} hide={hide} style={{ maxWidth: 360 }}>
-        <Title>SETTINGS</Title>
+        <Title>{caps(t("settings"))}</Title>
         <View style={styles.row}>
-          <Text style={styles.label}>Music</Text>
+          <Text style={styles.label}>{t("music")}</Text>
           <Switch
-            accessibilityLabel="Music"
+            accessibilityLabel={t("music")}
             value={music.musicEnabled}
             onChange={music.setMusicEnabled}
           />
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>Sound Effects</Text>
+          <Text style={styles.label}>{t("soundEffects")}</Text>
           <Switch
-            accessibilityLabel="Sound effects"
+            accessibilityLabel={t("a11ySoundEffects")}
             value={music.soundEffectsEnabled}
             onChange={music.setSoundEffectsEnabled}
           />
         </View>
         {canUseHaptics ? (
           <View style={styles.row}>
-            <Text style={styles.label}>Vibration</Text>
+            <Text style={styles.label}>{t("vibration")}</Text>
             <Switch
-              accessibilityLabel="Vibration"
+              accessibilityLabel={t("vibration")}
               value={hapticsEnabled}
               onChange={setHapticsEnabled}
             />
@@ -64,15 +65,17 @@ const Settings = ({ isVisible, hide }: SettingsProps) => {
         {canChangeAppIcon ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`App icon, currently ${appIcon}`}
-            accessibilityHint="Choose a different app icon"
+            accessibilityLabel={t("a11yAppIcon", {
+              animal: animalName(appIcon),
+            })}
+            accessibilityHint={t("a11yChooseAppIcon")}
             onPress={() => {
               haptics.tap();
               setShowAppIconChooser(true);
             }}
             style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
           >
-            <Text style={styles.label}>App Icon</Text>
+            <Text style={styles.label}>{t("appIcon")}</Text>
             <View style={styles.tile}>
               <AppIconTile animal={appIcon} size={48} />
             </View>
@@ -114,7 +117,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: colors.grayDark,
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 28,
     lineHeight: 34,
   },

@@ -15,6 +15,7 @@ import Title from "../Dialog/Title";
 import { ExitIcon } from "../Icons";
 import type { PlayerState } from "../Matchimals/game";
 import type { PlayerId } from "../hooks/players";
+import { animalName, caps, displayFont, t } from "../i18n";
 
 interface VictoryProps {
   backToMainMenu: () => void;
@@ -32,9 +33,9 @@ const Victory = ({ backToMainMenu, player, players }: VictoryProps) => {
   } = useAsyncStorage("lastReviewPrompt");
   const { playerConfig } = usePlayerConfig();
   const score = players[player]?.score;
-  const name = playerConfig[player]?.name;
+  const animal = playerConfig[player]?.animal;
   const backgroundColor = playerConfig[player]?.color;
-  const Icon = Animals[playerConfig[player]?.animal];
+  const Icon = Animals[animal];
 
   useEffect(() => {
     haptics.celebrate();
@@ -78,7 +79,7 @@ const Victory = ({ backToMainMenu, player, players }: VictoryProps) => {
         >
           <Icon width={80} height={80} />
         </View>
-        <Title>{name.toUpperCase()} WINS!</Title>
+        <Title>{caps(t("wins", { name: animalName(animal) }))}</Title>
         <Text style={styles.score}>{score}</Text>
         <Button
           color={colors.redLight}
@@ -86,7 +87,7 @@ const Victory = ({ backToMainMenu, player, players }: VictoryProps) => {
           onPress={handleEndGame}
           style={styles.exit}
         >
-          EXIT TO MAIN MENU
+          {caps(t("exitToMainMenu"))}
         </Button>
         <Header />
       </View>
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
   },
   score: {
     color: colors.grayDark,
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 80,
     lineHeight: 96,
     textAlign: "center",

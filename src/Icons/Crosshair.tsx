@@ -2,6 +2,7 @@ import React from "react";
 import Svg, { Circle, Path } from "svgs";
 
 import { colors } from "../constants/colors";
+import { t } from "../i18n";
 
 interface CrosshairIconProps {
   size?: number;
@@ -10,7 +11,7 @@ interface CrosshairIconProps {
 // A chunky crosshair: ring, four ticks, and a centre dot, in the same flat
 // style as the cog
 const CrosshairIcon = ({ size = 28 }: CrosshairIconProps) => (
-  <Svg title="Center" width={size} height={size} viewBox="0 0 32 32">
+  <Svg title={t("center")} width={size} height={size} viewBox="0 0 32 32">
     <Circle
       cx={16}
       cy={16}

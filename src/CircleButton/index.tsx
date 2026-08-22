@@ -6,6 +6,7 @@ import Reanimated from "react-native-reanimated";
 import { colors } from "../constants/colors";
 import { haptics } from "../haptics";
 import { usePressScale } from "../hooks/pressScale";
+import { displayFont } from "../i18n";
 
 interface CircleButtonProps extends TouchableOpacityProps {
   color?: string;
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   buttonText: {
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 32,
     color: colors.grayDark,
   },

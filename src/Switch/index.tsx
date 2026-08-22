@@ -11,6 +11,7 @@ import Reanimated, {
 
 import { colors } from "../constants/colors";
 import { haptics } from "../haptics";
+import { caps, displayFont, t } from "../i18n";
 
 const WIDTH = 96;
 const HEIGHT = 56;
@@ -58,10 +59,10 @@ const Switch = ({ value, onChange, ...rest }: SwitchProps) => {
       <Reanimated.View style={[styles.track, trackStyle]}>
         <View style={styles.trackInner}>
           <View style={styles.half}>
-            <Text style={styles.label}>ON</Text>
+            <Text style={styles.label}>{caps(t("on"))}</Text>
           </View>
           <View style={styles.half}>
-            <Text style={styles.label}>OFF</Text>
+            <Text style={styles.label}>{caps(t("off"))}</Text>
           </View>
           <Reanimated.View style={[styles.thumb, thumbStyle]} />
         </View>
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   label: {
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 18,
     color: colors.grayDark,
     opacity: 0.5,

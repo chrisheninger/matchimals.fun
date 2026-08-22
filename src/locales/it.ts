@@ -1,0 +1,70 @@
+import type { Translations } from "./types";
+
+const it: Translations = {
+  font: "Dimbo",
+
+  howManyPlayers: "Quanti giocatori?",
+  easyMode: "Facile",
+  classic: "Classico",
+  easyCaption: "C’è sempre una carta da mettere",
+  classicCaption: "Abbina se puoi, altrimenti passa",
+
+  settings: "Impostazioni",
+  music: "Musica",
+  soundEffects: "Effetti sonori",
+  vibration: "Vibrazione",
+  appIcon: "Icona dell’app",
+  yourAnimal: "Il tuo animale",
+  done: "Fatto",
+  on: "Sì",
+  off: "No",
+
+  scrollToCenter: "Vai al centro",
+  exitToMainMenu: "Menu principale",
+  wins: "{name} vince!",
+
+  pass: "Passa",
+  menu: "Menu",
+  exit: "Esci",
+  center: "Centra",
+
+  a11ySoundEffects: "Effetti sonori",
+  a11yAppIcon: "Icona dell’app, attuale {animal}",
+  a11yChooseAppIcon: "Scegli un’altra icona",
+  a11yUseAppIcon: "Usa l’icona {animal}",
+  a11yPlayAs: "Gioca come {animal}",
+
+  players: { one: "{n} giocatore", other: "{n} giocatori" },
+  animals: {
+    Bat: "Pipistrello",
+    Bear: "Orso",
+    Boar: "Cinghiale",
+    Bunny: "Coniglio",
+    Butterfly: "Farfalla",
+    Cat: "Gatto",
+    Chick: "Pulcino",
+    Chicken: "Gallina",
+    Cow: "Mucca",
+    Dog: "Cane",
+    Fox: "Volpe",
+    Frog: "Rana",
+    Giraffe: "Giraffa",
+    Gorilla: "Gorilla",
+    Hamster: "Criceto",
+    Hedgehog: "Riccio",
+    Koala: "Koala",
+    Lion: "Leone",
+    Monkey: "Scimmia",
+    Mouse: "Topo",
+    Owl: "Gufo",
+    Panda: "Panda",
+    Penguin: "Pinguino",
+    Pig: "Maiale",
+    Tiger: "Tigre",
+    Turtle: "Tartaruga",
+    Wolf: "Lupo",
+    Zebra: "Zebra",
+  },
+};
+
+export default it;

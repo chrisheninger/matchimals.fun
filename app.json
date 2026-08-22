@@ -24,6 +24,19 @@
         "applinks:www.matchimals.com"
       ],
       "infoPlist": {
+        "CFBundleDevelopmentRegion": "en",
+        "CFBundleLocalizations": [
+          "en",
+          "es",
+          "es-MX",
+          "pt-BR",
+          "de",
+          "fr",
+          "it",
+          "ja",
+          "ko",
+          "zh-Hans"
+        ],
         "ITSAppUsesNonExemptEncryption": false,
         "UIStatusBarHidden": true,
         "UIStatusBarStyle": "UIStatusBarStyleLightContent",
@@ -79,7 +92,8 @@
         }
       ],
       "expo-status-bar",
-      "expo-asset"
+      "expo-asset",
+      "expo-localization"
     ]
   }
 }
