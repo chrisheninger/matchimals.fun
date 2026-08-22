@@ -54,12 +54,19 @@ const Toggle = <T extends string>({
   }));
 
   return (
-    <View style={[styles.track, style]} {...rest}>
+    <View
+      accessibilityRole="radiogroup"
+      style={[styles.track, style]}
+      {...rest}
+    >
       <View style={styles.trackInner}>
         <Reanimated.View style={[styles.thumb, thumbStyle]} />
         {options.map((option) => (
           <Pressable
             key={option.value}
+            accessibilityRole="radio"
+            accessibilityLabel={option.label}
+            accessibilityState={{ checked: option.value === value }}
             style={styles.segment}
             onPress={() => {
               if (option.value !== value) {

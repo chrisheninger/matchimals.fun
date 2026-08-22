@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import Reanimated from "react-native-reanimated";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { StyleProp, TouchableOpacityProps, ViewStyle } from "react-native";
+import Reanimated from "react-native-reanimated";
 import { usePlayerConfig } from "../hooks/players";
 import { colors } from "../constants/colors";
 import Animals from "../Animals";
@@ -70,6 +70,8 @@ const PlayerButton = ({ number, onPress, style }: PlayerButtonProps) => {
 
   return (
     <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel={`${number} player${number === 1 ? "" : "s"}`}
       onPress={(event) => {
         haptics.tap();
         onPress?.(event);
@@ -101,6 +103,9 @@ const PlayerButton = ({ number, onPress, style }: PlayerButtonProps) => {
             ))}
           </View>
         </View>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>{number}</Text>
+        </View>
       </Reanimated.View>
     </TouchableOpacity>
   );
@@ -124,6 +129,32 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: colors.grayDark,
     borderRadius: 60,
+  },
+  // The player count, sitting on the circle's rim with the same white-then-
+  // dark double ring as the circle itself
+  badge: {
+    position: "absolute",
+    right: -8,
+    bottom: -8,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  badgeText: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 3,
+    borderColor: colors.grayDark,
+    color: colors.grayDark,
+    fontFamily: "Dimbo",
+    fontSize: 22,
+    lineHeight: 30,
+    textAlign: "center",
+    overflow: "hidden",
   },
 });
 
