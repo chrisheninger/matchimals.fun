@@ -1,0 +1,24 @@
+Matchimals es un juego de cartas con animales para 1-4 jugadores, pensado para niños (de 2 a 10 años les encanta) y para los mayores que juegan con ellos. Conecta las cartas para que los animales de sus bordes coincidan, suma puntos y descubre quién construye el mejor tablero.
+
+CÓMO SE JUEGA
+• Por turnos, coloca la primera carta del mazo junto a las que ya están en la mesa.
+• Cada borde que coincide con el animal de al lado da puntos: algunos animales valen más que otros.
+• Busca un hueco que coincida por dos o tres lados para una jugada enorme.
+• Cuando se acaba el mazo, gana quien tenga más puntos.
+
+DOS FORMAS DE JUGAR
+• Modo fácil: siempre hay un animal que encaja, así que los más pequeños nunca se quedan atascados.
+• Clásico: empareja si puedes y, si no, pasa. Las reglas originales, con un poco más de picante.
+
+HECHO PARA COMPARTIR UNA PANTALLA
+• Pasa y juega con hasta 4 jugadores en un solo iPhone o iPad: sin cuentas y sin internet.
+• También puedes jugar solo para una partida tranquila.
+• Elige tu animal: hay 28, cada uno con su color… y su icono de app a juego.
+• Pellizca y arrastra para moverte por un tablero que crece con cada carta.
+
+BUENO SABERLO
+• Sin anuncios. Sin compras dentro de la app. Nada que desbloquear.
+• Basado en Busy Bee, un juego de cartas de 1959.
+• Código abierto: el juego entero está en GitHub.
+
+Matchimals quiere entretener y mejorar el reconocimiento de patrones con divertidas ilustraciones de animales, colores y números.

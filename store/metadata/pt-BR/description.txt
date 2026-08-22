@@ -1,0 +1,24 @@
+Matchimals é um jogo de cartas com bichos para 1 a 4 jogadores, feito para crianças (de 2 a 10 anos adoram) e para os adultos que jogam com elas. Conecte as cartas para que os bichos das bordas combinem, junte pontos e veja quem monta o melhor tabuleiro.
+
+COMO JOGAR
+• Cada um na sua vez coloca a carta do topo do baralho ao lado das cartas que já estão na mesa.
+• Cada borda que combina com o bicho vizinho vale pontos — alguns bichos valem mais que outros.
+• Ache um lugar que combine por dois ou três lados para uma jogada gigante.
+• Quando o baralho acaba, quem tem mais pontos vence.
+
+DOIS JEITOS DE JOGAR
+• Modo fácil — sempre tem um bicho que combina, então os pequenos nunca ficam travados.
+• Clássico — combine se der e, se não der, passe. As regras originais, com um pouco mais de desafio.
+
+FEITO PARA DIVIDIR UMA TELA
+• Passe e jogue com até 4 jogadores em um só iPhone ou iPad — sem conta, sem internet.
+• Dá para jogar sozinho também, numa partida tranquila.
+• Escolha seu bicho: são 28, cada um com sua cor — e um ícone do app combinando.
+• Belisque e arraste para passear por um tabuleiro que cresce a cada carta.
+
+BOM SABER
+• Sem anúncios. Sem compras no app. Nada para desbloquear.
+• Inspirado em Busy Bee, um jogo de cartas de 1959.
+• Código aberto — o jogo inteiro está no GitHub.
+
+O Matchimals quer divertir e desenvolver o reconhecimento de padrões com ilustrações alegres de bichos, cores e números.
