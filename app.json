@@ -12,7 +12,7 @@
     "ios": {
       "bundleIdentifier": "native.matchimals.fun",
       "buildNumber": "11",
-      "appleTeamId": "22ZH5U6APW",
+      "appleTeamId": "V96U8AA2LR",
       "supportsTablet": true,
       "requireFullScreen": false,
       "googleServicesFile": "./GoogleService-Info.plist",
@@ -70,6 +70,7 @@
         }
       ],
       "./plugins/withFirebaseNoAdId.js",
+      "./plugins/withAnimalAppIcons.js",
       [
         "expo-audio",
         {

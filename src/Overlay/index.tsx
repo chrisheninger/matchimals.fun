@@ -1,4 +1,10 @@
-import React, { Fragment, useEffect, useId, useReducer } from "react";
+import React, {
+  Fragment,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useReducer,
+} from "react";
 import { StyleSheet, View } from "react-native";
 
 // A dependency-free portal for native. RN has no createPortal for native, and
@@ -29,7 +35,10 @@ const removeOverlay = (id: string) => {
 
 const OverlayHost = () => {
   const [, force] = useReducer((n) => n + 1, 0);
-  useEffect(() => {
+  // Subscribe during layout so the host is listening before any Portal's
+  // passive effect fires — including portals mounted in the very same commit
+  // as the host (passive effects run children-first, after all layout effects).
+  useLayoutEffect(() => {
     listeners.add(force);
     return () => {
       listeners.delete(force);

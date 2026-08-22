@@ -42,6 +42,8 @@ This is an [Expo](https://expo.dev) app using [continuous native generation](htt
 1.  Build and run the app in the iOS simulator: `bun run ios`
 1.  Or run the web version: `bun run web`
 
+The app icons are rendered from the animal SVGs: `bun run generate:icons` regenerates the primary icon, the per-animal alternate icons (pick one under Settings on iOS), and the web icons — commit the output.
+
 ### Deploying to TestFlight
 
 iOS releases are built and uploaded entirely locally (no EAS subscription or fastlane required):

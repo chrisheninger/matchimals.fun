@@ -3,7 +3,10 @@
     "apps": [],
     "details": [
       {
-        "appID": "22ZH5U6APW.native.matchimals.fun",
+        "appIDs": [
+          "V96U8AA2LR.native.matchimals.fun",
+          "22ZH5U6APW.native.matchimals.fun"
+        ],
         "paths": [
           "/"
         ]

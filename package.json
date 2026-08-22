@@ -13,7 +13,8 @@
     "deploy:ios": "./scripts/deploy-ios.sh",
     "test": "jest --passWithNoTests",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write 'src/**/*.{ts,tsx,js,json,md}'"
+    "format": "prettier --write 'src/**/*.{ts,tsx,js,json,md}'",
+    "generate:icons": "bun scripts/generate-app-icons.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -21,6 +22,7 @@
     "@react-native-firebase/app": "^23.0.0",
     "boardgame.io": "0.50.2",
     "expo": "^56.0.0",
+    "expo-alternate-app-icons": "^8.0.0",
     "expo-asset": "~56.0.17",
     "expo-audio": "~56.0.12",
     "expo-build-properties": "~56.0.18",
@@ -41,6 +43,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@types/lodash": "^4.17.24",
     "@types/react": "~19.2.14",
     "babel-preset-expo": "~56.0.0",
@@ -50,6 +53,7 @@
     "lint-staged": "8.2.0",
     "prettier": "2.8.8",
     "react-test-renderer": "19.2.3",
+    "sharp": "^0.35.3",
     "typescript": "~6.0.3"
   },
   "engines": {

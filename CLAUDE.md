@@ -16,6 +16,7 @@ bun run start          # expo dev server
 bun run test           # jest (jest-expo preset, --passWithNoTests)
 bun run typecheck      # tsc --noEmit (strict; keep this clean)
 bun run format         # prettier on src/**
+bun run generate:icons # re-render the app icons from the animal SVGs (outputs are committed)
 
 bun run prebuild       # regenerate ios/ from app.json (expo prebuild -p ios --clean)
 bun run build:web      # static web export to dist/ (expo export -p web)
@@ -30,7 +31,7 @@ Lint: `.eslintrc` extends `@react-native`; `lint-staged` runs prettier on commit
 
 The `ios/` directory is **generated** from `app.json` (and the config plugins) — it is not the source of truth and is gitignored. Never hand-edit native iOS files expecting changes to persist; edit `app.json` or a config plugin and re-run `bun run prebuild`. Building requires Xcode + CocoaPods. Releases are built locally (no paid EAS): `bun run deploy:ios` auto-increments `ios.buildNumber`, archives, and uploads to TestFlight (needs an App Store Connect API key — see README "Deploying to TestFlight"); bump `version` in `app.json` manually for new releases. See the build-philosophy memory: no fastlane, no paid EAS.
 
-`plugins/withFirebaseNoAdId.js` is a custom dangerous-mod plugin that prepends `$RNFirebaseAnalyticsWithoutAdIdSupport=true` to the Podfile so AdSupport.framework isn't linked (keeps the App Store privacy declaration clean).
+`plugins/withFirebaseNoAdId.js` is a custom dangerous-mod plugin that prepends `$RNFirebaseAnalyticsWithoutAdIdSupport=true` to the Podfile so AdSupport.framework isn't linked (keeps the App Store privacy declaration clean). `plugins/withAnimalAppIcons.js` copies `assets/app-icons/animals/*.appiconset` into the asset catalog and lists them in `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` so iOS offers them as alternate app icons.
 
 ## Architecture
 
@@ -43,6 +44,8 @@ The `ios/` directory is **generated** from `app.json` (and the config plugins) �
 **Platform splits via `.web.tsx`.** Some modules have a web variant resolved automatically by Metro: `Dialog`, `Nameplate`. Each pair shares a props/context type in a sibling `types.ts` — when touching these, update both variants and keep the shared type honest. (`Music` has no web variant — expo-audio works on both platforms, and `setAudioModeAsync` is a no-op on web.)
 
 **Animals** (`src/Animals/`) are individual react-native-svg components taking `SvgProps`; `src/Animals/index.ts` is the registry, and `AnimalName` (`keyof typeof Animals`) ties it to `constants/animals.ts` and the player config. `src/hooks/players.tsx` assigns each of up to 4 players a random animal + color via a PlayerProvider context.
+
+**App icons are the animals.** `scripts/generate-app-icons.mjs` renders every registered animal onto the table wood: the `defaultAppIcon` from `constants/appIcon.ts` becomes the primary icon (`assets/app-icons/Icon-App-1024x1024.png` + `public/icons/`), and every other animal an explicit-size `.appiconset` under `assets/app-icons/animals/` (no 1024 per alternate — each would add ~1 MB to the bundle). The iOS alternate-icon name is the `AnimalName`; `src/hooks/appIcon.ts` wraps `expo-alternate-app-icons` (null ⇄ `defaultAppIcon`), and the OS remembers the choice, so the app persists nothing. `AppIconChooser` opens from the `Settings` dialog (the cog beside the audio controls on the main menu and in the in-game menu; `Switch` is the on/off control used there), and only when `canChangeAppIcon` (iOS). Adding an animal to the registry means re-running `bun run generate:icons` and committing the output.
 
 ## Conventions
 
