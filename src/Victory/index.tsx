@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import type { ViewProps } from "react-native";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import InAppReview from "react-native-in-app-review";
 
@@ -10,22 +9,22 @@ import { colors } from "../constants/colors";
 import Animals from "../Animals";
 import Button from "../Button";
 import Confetti from "../Confetti";
+import Header, { HEADER_CLEARANCE } from "../Dialog/Header";
+import Title from "../Dialog/Title";
+import { ExitIcon } from "../Icons";
 import type { PlayerState } from "../Matchimals/game";
 import type { PlayerId } from "../hooks/players";
 
-interface VictoryProps extends ViewProps {
+interface VictoryProps {
   backToMainMenu: () => void;
   player: PlayerId;
   players: Record<string, PlayerState>;
 }
 
-const Victory = ({
-  backToMainMenu,
-  player,
-  players,
-  style,
-  ...rest
-}: VictoryProps) => {
+// The end-of-game card: the dialog chrome (logo header, white card) over
+// confetti, with the winner's circle in their colour. Not dismissable — the
+// only way out is back to the main menu.
+const Victory = ({ backToMainMenu, player, players }: VictoryProps) => {
   const {
     getItem: getAsyncLastReviewPrompt,
     setItem: setAsyncLastReviewPrompt,
@@ -63,30 +62,28 @@ const Victory = ({
   };
 
   return (
-    <View style={[styles.root, style]} {...rest}>
+    <View style={styles.root}>
       <Confetti />
-      <View style={styles.modal}>
+      <View style={styles.card}>
         <View
           style={[
             styles.animal,
-            {
-              backgroundColor: backgroundColor || "#9F9FB7",
-            },
+            { backgroundColor: backgroundColor || colors.grayLight },
           ]}
         >
           <Icon width={80} height={80} />
         </View>
-        <View style={styles.details}>
-          <Text style={styles.name}>{name} Wins!</Text>
-          <Text style={styles.score}>{score}</Text>
-          <Button
-            color={colors.redLight}
-            onPress={handleEndGame}
-            style={{ marginBottom: 16 }}
-          >
-            EXIT TO MAIN MENU
-          </Button>
-        </View>
+        <Title>{name.toUpperCase()} WINS!</Title>
+        <Text style={styles.score}>{score}</Text>
+        <Button
+          color={colors.redLight}
+          icon={<ExitIcon />}
+          onPress={handleEndGame}
+          style={styles.exit}
+        >
+          EXIT TO MAIN MENU
+        </Button>
+        <Header />
       </View>
     </View>
   );
@@ -95,55 +92,39 @@ const Victory = ({
 const styles = StyleSheet.create({
   root: {
     ...StyleSheet.absoluteFill,
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(0,0,0,0.5)",
   },
-  modal: {
-    width: 316,
-    flexDirection: "row",
+  // The same card as Dialog, at the menu dialog's width
+  card: {
+    alignSelf: "stretch",
+    marginHorizontal: 16,
+    maxWidth: 360,
     alignItems: "center",
     backgroundColor: "#fff",
-    borderRadius: 36,
-    borderColor: "#fff",
-    borderWidth: 4,
-    marginBottom: 4,
+    borderRadius: 16,
+    padding: 8,
+    paddingTop: HEADER_CLEARANCE + 8,
   },
   animal: {
-    position: "absolute",
-    top: -60,
-    left: "50%",
-    marginLeft: -60,
-    flexShrink: 0,
-    justifyContent: "center",
-    alignItems: "center",
     width: 120,
     height: 120,
     borderRadius: 60,
-    borderWidth: 8,
-    borderColor: "#fff",
-  },
-  details: {
-    flex: 1,
-    alignItems: "center",
     justifyContent: "center",
-  },
-  name: {
-    textAlign: "center",
-    color: "#17171b",
-    fontFamily: "Dimbo",
-    fontSize: 48,
-    lineHeight: 60,
-    marginTop: 72,
+    alignItems: "center",
+    marginBottom: 12,
   },
   score: {
-    textAlign: "center",
-    color: "#17171b",
+    color: colors.grayDark,
     fontFamily: "Dimbo",
-    fontSize: 96,
-    lineHeight: 128,
-    marginTop: -12,
+    fontSize: 80,
+    lineHeight: 96,
+    textAlign: "center",
+  },
+  exit: {
+    alignSelf: "stretch",
+    marginTop: 12,
   },
 });
 
