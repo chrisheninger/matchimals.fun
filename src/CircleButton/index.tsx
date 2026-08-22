@@ -1,9 +1,11 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { TouchableOpacityProps } from "react-native";
+import Reanimated from "react-native-reanimated";
 
 import { colors } from "../constants/colors";
 import { haptics } from "../haptics";
+import { usePressScale } from "../hooks/pressScale";
 
 interface CircleButtonProps extends TouchableOpacityProps {
   color?: string;
@@ -13,23 +15,34 @@ const CircleButton = ({
   children,
   color,
   onPress,
+  onPressIn,
+  onPressOut,
   ...rest
 }: CircleButtonProps) => {
+  const press = usePressScale();
+
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
+      activeOpacity={0.9}
       onPress={(event) => {
         haptics.tap();
         onPress?.(event);
       }}
+      onPressIn={(event) => {
+        press.onPressIn();
+        onPressIn?.(event);
+      }}
+      onPressOut={(event) => {
+        press.onPressOut();
+        onPressOut?.(event);
+      }}
       {...rest}
     >
-      <View
+      <Reanimated.View
         style={[
           styles.button,
-          {
-            backgroundColor: color || colors.blueLight,
-          },
+          { backgroundColor: color || colors.blueLight },
+          press.style,
         ]}
       >
         <View style={styles.buttonInner}>
@@ -39,7 +52,7 @@ const CircleButton = ({
             children
           )}
         </View>
-      </View>
+      </Reanimated.View>
     </TouchableOpacity>
   );
 };

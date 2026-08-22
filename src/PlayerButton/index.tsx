@@ -1,10 +1,12 @@
 import React, { useCallback } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import Reanimated from "react-native-reanimated";
 import type { StyleProp, TouchableOpacityProps, ViewStyle } from "react-native";
 import { usePlayerConfig } from "../hooks/players";
 import { colors } from "../constants/colors";
 import Animals from "../Animals";
 import { haptics } from "../haptics";
+import { usePressScale } from "../hooks/pressScale";
 
 interface PlayerButtonProps {
   number: number;
@@ -14,6 +16,7 @@ interface PlayerButtonProps {
 
 const PlayerButton = ({ number, onPress, style }: PlayerButtonProps) => {
   const { playerConfig } = usePlayerConfig();
+  const press = usePressScale();
   const PlayerIcons = Array(number)
     .fill(undefined)
     .map((n, i) => Animals[playerConfig[i]["animal"]]);
@@ -71,15 +74,16 @@ const PlayerButton = ({ number, onPress, style }: PlayerButtonProps) => {
         haptics.tap();
         onPress?.(event);
       }}
-      activeOpacity={0.8}
+      onPressIn={press.onPressIn}
+      onPressOut={press.onPressOut}
+      activeOpacity={0.9}
+      style={style}
     >
-      <View
+      <Reanimated.View
         style={[
           styles.tag,
-          {
-            backgroundColor: getBackgroundColor(),
-          },
-          style,
+          { backgroundColor: getBackgroundColor() },
+          press.style,
         ]}
       >
         <View style={styles.tagInner}>
@@ -97,7 +101,7 @@ const PlayerButton = ({ number, onPress, style }: PlayerButtonProps) => {
             ))}
           </View>
         </View>
-      </View>
+      </Reanimated.View>
     </TouchableOpacity>
   );
 };
