@@ -70,6 +70,7 @@
         }
       ],
       "./plugins/withFirebaseNoAdId.js",
+      "./plugins/withAnimalAppIcons.js",
       [
         "expo-audio",
         {
