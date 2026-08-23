@@ -1,10 +1,15 @@
 // Uploads the App Store previews in store/previews/ to App Store Connect: one
 // per display class (the 6.5" iPhone and the 13" iPad App Preview sets) for
 // every localization of the version that is open for editing, and points each
-// one's poster frame at the filled board. Nothing else on the version is
-// touched and nothing is submitted for review.
+// one's poster frame at the filled board. A localization gets the take
+// recorded in its language, store/previews/<locale>/, when there is one, and
+// the en-US pair at the top of store/previews otherwise (see
+// store/previews/README.md for regenerating them). Nothing else on the
+// version is touched and nothing is submitted for review.
 //
 //   bun run asc:previews                   # every localization of the editable version
+//                                          # (previews already there are left alone
+//                                          # unless the file on disk is another take)
 //   bun run asc:previews --dry-run         # show what would be uploaded
 //   bun run asc:previews --locales "ja ko" # only these localizations
 //   bun run asc:previews --replace         # re-upload previews that are already there
@@ -15,7 +20,7 @@
 // (matchimals-asc.env naming ASC_KEY_ID and ASC_ISSUER_ID, beside
 // AuthKey_<id>.p8); the key never leaves this machine.
 import { createHash, createPrivateKey, sign } from "node:crypto";
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -221,21 +226,31 @@ const timecode = (ms) => {
   )}:${pad(seconds % 60)}:${pad(frames)}`;
 };
 
-const videos = new Map();
-for (const name of files) {
-  const data = await readFile(path.join(previewsDir, name));
-  const duration = mp4Duration(data);
-  if (!duration && !frameOption) {
-    fail(`Can't read the duration of ${name} — pass --frame.`);
+// The preview to upload for a localization: its own take if there is one,
+// otherwise the en-US pair at the top of the folder
+const loaded = new Map();
+const videoFor = async (locale, name) => {
+  const own = path.join(previewsDir, locale, name);
+  const file = (await stat(own).catch(() => null))
+    ? own
+    : path.join(previewsDir, name);
+  if (!loaded.has(file)) {
+    const data = await readFile(file);
+    const duration = mp4Duration(data);
+    if (!duration && !frameOption) {
+      fail(`Can't read the duration of ${file} — pass --frame.`);
+    }
+    loaded.set(file, {
+      name,
+      source: path.relative(previewsDir, file),
+      previewType: PREVIEWS[name],
+      data,
+      checksum: createHash("md5").update(data).digest("hex"),
+      frame: frameOption ?? timecode(duration * POSTER_AT),
+    });
   }
-  videos.set(name, {
-    name,
-    previewType: PREVIEWS[name],
-    data,
-    checksum: createHash("md5").update(data).digest("hex"),
-    frame: frameOption ?? timecode(duration * POSTER_AT),
-  });
-}
+  return loaded.get(file);
+};
 
 // --- Upload ---------------------------------------------------------------------
 
@@ -387,9 +402,9 @@ const main = async () => {
       version.attributes.versionString
     } is ${
       version.attributes.appVersionState ?? version.attributes.appStoreState
-    }; ${
-      statusOnly ? "previews" : `uploading ${[...videos.keys()].join(", ")}`
-    }${dryRun ? " [dry run]" : ""}`
+    }; ${statusOnly ? "previews" : `uploading ${files.join(", ")}`}${
+      dryRun ? " [dry run]" : ""
+    }`
   );
 
   const localizations = (
@@ -413,7 +428,8 @@ const main = async () => {
         )
       ).map((set) => [set.attributes.previewType, set])
     );
-    for (const video of videos.values()) {
+    for (const name of files) {
+      const video = await videoFor(locale, name);
       const label = `${locale}/${video.previewType}`;
       let set = sets.get(video.previewType);
       const existing = set
@@ -421,6 +437,12 @@ const main = async () => {
         : [];
       const same = existing.filter(
         (preview) => preview.attributes.fileName === video.name
+      );
+      // A namesake App Store Connect checksummed differently is another take
+      const stale = same.some(
+        (preview) =>
+          preview.attributes.sourceFileChecksum &&
+          preview.attributes.sourceFileChecksum !== video.checksum
       );
       if (statusOnly) {
         for (const preview of existing) {
@@ -438,7 +460,7 @@ const main = async () => {
         }
         continue;
       }
-      if (same.length && !replace) {
+      if (same.length && !replace && !stale) {
         // A re-run after an interrupted one still gets the poster frame set
         for (const preview of same) {
           const a = preview.attributes;
@@ -447,14 +469,14 @@ const main = async () => {
             a.previewFrameTimeCode !== video.frame
           ) {
             log(
-              `  ${label}: ${video.name} already there — poster at ${video.frame}`
+              `  ${label}: ${video.source} already there — poster at ${video.frame}`
             );
             if (!dryRun) {
               await setPoster(preview.id, video.frame);
             }
           } else {
             log(
-              `  ${label}: ${video.name} already there, ${a.assetDeliveryState?.state} (use --replace)`
+              `  ${label}: ${video.source} already there, ${a.assetDeliveryState?.state} (use --replace)`
             );
           }
         }
@@ -466,8 +488,10 @@ const main = async () => {
         continue;
       }
       log(
-        `  ${label}: uploading ${video.name}${
-          same.length ? ` (replacing ${same.length})` : ""
+        `  ${label}: uploading ${video.source}${
+          same.length
+            ? ` (replacing ${same.length}${stale ? ", another take" : ""})`
+            : ""
         }`
       );
       if (dryRun) {
