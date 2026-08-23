@@ -185,7 +185,7 @@ const Table = forwardRef<TableHandle, TableProps>(
         savedX.value = translateX.value;
         savedY.value = translateY.value;
       })
-      // onFinalize also runs when the gesture fails or is cancelled, so the pan
+      // onFinalize also runs when the gesture fails or is canceled, so the pan
       // is never left permanently suppressed.
       .onFinalize(() => {
         pinchActive.value = false;

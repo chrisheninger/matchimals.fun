@@ -8,7 +8,7 @@ interface CrosshairIconProps {
   size?: number;
 }
 
-// A chunky crosshair: ring, four ticks, and a centre dot, in the same flat
+// A chunky crosshair: ring, four ticks, and a center dot, in the same flat
 // style as the cog
 const CrosshairIcon = ({ size = 28 }: CrosshairIconProps) => (
   <Svg title={t("center")} width={size} height={size} viewBox="0 0 32 32">

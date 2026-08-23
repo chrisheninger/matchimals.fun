@@ -131,7 +131,7 @@ const Card = ({
   const handleEnd = useCallback(
     (didDrop: boolean) => {
       // A release before the drag-start measurement resolves (an instant tap)
-      // has no trustworthy drop point — treat it as a cancelled drag.
+      // has no trustworthy drop point — treat it as a canceled drag.
       if (!didDrop || !baseMeasured.current || !onCardDrop) {
         snapBack();
         return;

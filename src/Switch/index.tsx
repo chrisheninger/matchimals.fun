@@ -72,7 +72,7 @@ const Switch = ({ value, onChange, ...rest }: SwitchProps) => {
 };
 
 const styles = StyleSheet.create({
-  // The animated track colour owns backgroundColor
+  // The animated track color owns backgroundColor
   track: {
     width: WIDTH,
     height: HEIGHT,

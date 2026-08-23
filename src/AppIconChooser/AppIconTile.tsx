@@ -15,7 +15,7 @@ interface AppIconTileProps {
 
 // A miniature of the real app icon: the animal on the wood table at the
 // icon's proportions (the art is 3/4 of the icon, nudged down 28/1024 so the
-// face sits on the optical centre — see scripts/generate-app-icons.mjs).
+// face sits on the optical center — see scripts/generate-app-icons.mjs).
 const AppIconTile = ({ animal, size = 72 }: AppIconTileProps) => {
   const Icon = Animals[animal];
   const art = Math.round(size * 0.75);

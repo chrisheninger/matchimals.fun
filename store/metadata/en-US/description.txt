@@ -2,7 +2,7 @@ Matchimals is an animal matching card game for 1–4 players, made for kids (age
 
 HOW TO PLAY
 • Take turns placing the top card from the deck next to the cards already on the table.
-• Every edge that matches its neighbour's animal scores points — some animals are worth more than others.
+• Every edge that matches its neighbor's animal scores points — some animals are worth more than others.
 • Find a spot that matches on two or three sides for a big turn.
 • When the deck runs out, the highest score wins.
 
@@ -13,7 +13,7 @@ TWO WAYS TO PLAY
 MADE FOR SHARING ONE SCREEN
 • Pass-and-play for up to 4 players on one iPhone or iPad — no accounts, no internet needed.
 • Play solo for a quiet round, too.
-• Choose your animal: 28 to pick from, each with its own colour — and a matching app icon.
+• Choose your animal: 28 to pick from, each with its own color — and a matching app icon.
 • Pinch and drag around a board that grows with every card.
 
 GOOD TO KNOW

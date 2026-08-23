@@ -24,7 +24,7 @@ const webIconsDir = path.join(root, "public/icons");
 
 const SIZE = 1024;
 // The animal art fills 60/64 of its viewBox, so a 778px canvas puts ~730px of
-// animal on the icon; nudged down so the face sits on the optical centre.
+// animal on the icon; nudged down so the face sits on the optical center.
 const ART_SIZE = 778;
 const ART_OFFSET_Y = 28;
 
@@ -33,7 +33,7 @@ const ART_OFFSET_Y = 28;
 // upscaled.
 const WOOD_GAIN = [0.8443, 0.8389, 0.871];
 const WOOD_SHARPEN = { sigma: 1.5, amount: 0.6 };
-// Linear contrast stretch about mid-grey: y = slope * x + intercept, for x in 0..1
+// Linear contrast stretch about mid-gray: y = slope * x + intercept, for x in 0..1
 const WOOD_CONTRAST = { slope: 1.17085, intercept: -0.085425 };
 
 // Alternate icons only ever show at home-screen, Spotlight and Settings sizes,

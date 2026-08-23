@@ -98,7 +98,7 @@ const playersOf = (animals: AnimalName[]): PlayerConfig =>
   );
 
 // Fixed players for the store screenshots, each picked to read well on their
-// plate colour (player order follows the PlayerProvider defaults)
+// plate color (player order follows the PlayerProvider defaults)
 const screenshotPlayers = playersOf(["Fox", "Penguin", "Frog", "Koala"]);
 
 // The four animals whose names run longest in the running language, so the

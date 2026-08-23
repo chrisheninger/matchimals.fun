@@ -24,7 +24,7 @@ interface VictoryProps {
 }
 
 // The end-of-game card: the dialog chrome (logo header, white card) over
-// confetti, with the winner's circle in their colour. Not dismissable — the
+// confetti, with the winner's circle in their color. Not dismissable — the
 // only way out is back to the main menu.
 const Victory = ({ backToMainMenu, player, players }: VictoryProps) => {
   const {

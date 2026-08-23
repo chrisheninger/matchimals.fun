@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     borderColor: colors.yellowDark,
   },
   // Long translated names shrink to the tile pitch (tile plus both margins)
-  // instead of running into the neighbour's label
+  // instead of running into the neighbor's label
   name: {
     maxWidth: CHOOSER_TILE + 20,
     color: colors.grayDark,

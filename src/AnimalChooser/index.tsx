@@ -17,7 +17,7 @@ interface AnimalChooserProps {
   player: PlayerId;
 }
 
-// Picks the animal (and name) a player goes by, in their colour
+// Picks the animal (and name) a player goes by, in their color
 const AnimalChooser = ({ isVisible, hide, player }: AnimalChooserProps) => {
   const { playerConfig, setPlayerConfig } = usePlayerConfig();
   const { animal: current, color } = playerConfig[player];
