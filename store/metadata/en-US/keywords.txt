@@ -1,1 +1,1 @@
-family,kids,toddler,preschool,board,tile,domino,multiplayer,pass,play,party,offline,puzzle,zoo,cute
+family,kids,toddler,preschool,board,tile,domino,multiplayer,pass,play,party,offline,card,zoo,cute

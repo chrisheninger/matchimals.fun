@@ -241,15 +241,17 @@ const main = async () => {
     ])
   );
 
-  const versionLocalizations = new Map(
-    version
-      ? (
-          await list(
-            `/appStoreVersions/${version.id}/appStoreVersionLocalizations`
-          )
-        ).map((l) => [l.attributes.locale, l])
-      : []
-  );
+  const readVersionLocalizations = async () =>
+    new Map(
+      version
+        ? (
+            await list(
+              `/appStoreVersions/${version.id}/appStoreVersionLocalizations`
+            )
+          ).map((l) => [l.attributes.locale, l])
+        : []
+    );
+  let versionLocalizations = await readVersionLocalizations();
   // New storefronts inherit the support/marketing URLs of the primary one
   const primary = versionLocalizations.get("en-US")?.attributes ?? {};
 
@@ -258,14 +260,16 @@ const main = async () => {
       ([key, value]) => (current[key] ?? "") !== value
     );
 
+  // Name and subtitle. Adding a storefront here makes App Store Connect
+  // create its (empty) version localization as well, hence the re-read below
+  let addedStorefront = false;
   for (const locale of storefronts) {
     const wanted = listing[locale];
-
-    // Name and subtitle
     const info = infoLocalizations.get(locale);
     const infoFields = { name: wanted.name, subtitle: wanted.subtitle };
     if (!info) {
       log(`  ${locale}: adding name/subtitle`);
+      addedStorefront = true;
       if (!dryRun) {
         await api("POST", "/appInfoLocalizations", {
           data: {
@@ -292,8 +296,14 @@ const main = async () => {
         }
       }
     }
+  }
+  if (addedStorefront && !dryRun) {
+    versionLocalizations = await readVersionLocalizations();
+  }
 
-    // Version text
+  // Version text
+  for (const locale of storefronts) {
+    const wanted = listing[locale];
     const versionFields = {
       description: wanted.description,
       keywords: wanted.keywords,
