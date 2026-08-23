@@ -44,17 +44,21 @@ export const shareVictory: ShareVictory = async (card, { text, subject }) => {
     return;
   }
   const file = await renderPicture(card);
-  try {
-    if (typeof navigator.share === "function") {
-      const withFile = file && navigator.canShare?.({ files: [file] });
+  if (typeof navigator.share === "function") {
+    const withFile = file && navigator.canShare?.({ files: [file] });
+    try {
       await navigator.share(
         withFile ? { files: [file], text, title: subject } : { text }
       );
       return;
+    } catch (error) {
+      // Closing the sheet rejects with an AbortError; anything else (the
+      // user-activation window expiring during a slow capture, a browser
+      // that advertises sharing it can't do) falls through to the download
+      if ((error as { name?: string })?.name === "AbortError") {
+        return;
+      }
     }
-  } catch {
-    // Closing the sheet rejects with an AbortError; nothing to do
-    return;
   }
   if (file) {
     download(file);
