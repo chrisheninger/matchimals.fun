@@ -22,6 +22,10 @@ const de: Translations = {
   scrollToCenter: "Zur Mitte",
   exitToMainMenu: "Zum Hauptmenü",
   wins: "{name} gewinnt!",
+  share: "Teilen",
+  shareMessage:
+    "{name} gewinnt {scores} bei Matchimals {emoji} Kostenlos und ohne Werbung: {url}",
+  shareFooter: "kostenlos · ohne Werbung",
 
   pass: "Passen",
   menu: "Menü",

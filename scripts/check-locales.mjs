@@ -132,6 +132,7 @@ for (const [code, strings] of Object.entries(locales)) {
     ["settings (button)", upper(strings.settings, code), 32, 224, true],
     ["scrollToCenter", upper(strings.scrollToCenter, code), 32, 224, true],
     ["exitToMainMenu", upper(strings.exitToMainMenu, code), 32, 224, true],
+    ["share", upper(strings.share, code), 32, 224, true],
     ["done", upper(strings.done, code), 32, 264, true],
     // Settings rows: label beside a 96px switch in a 344px card, 28px
     ["soundEffects", strings.soundEffects, 28, 236, false],

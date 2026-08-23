@@ -24,6 +24,10 @@ const ja: Translations = {
   scrollToCenter: "中央にもどる",
   exitToMainMenu: "メニューへ",
   wins: "{name}のかち！",
+  share: "共有",
+  shareMessage:
+    "Matchimalsで{name}が{scores}でかち！{emoji} 無料・広告なし：{url}",
+  shareFooter: "無料 · 広告なし",
 
   pass: "パス",
   menu: "メニュー",

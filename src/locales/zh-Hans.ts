@@ -22,6 +22,10 @@ const zhHans: Translations = {
   scrollToCenter: "回到中间",
   exitToMainMenu: "回主菜单",
   wins: "{name}赢了！",
+  share: "分享",
+  shareMessage:
+    "{name}在Matchimals中以{scores}获胜！{emoji} 免费、无广告：{url}",
+  shareFooter: "免费 · 无广告",
 
   pass: "跳过",
   menu: "菜单",
