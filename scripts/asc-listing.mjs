@@ -260,13 +260,19 @@ const main = async () => {
       ([key, value]) => (current[key] ?? "") !== value
     );
 
-  // Name and subtitle. Adding a storefront here makes App Store Connect
-  // create its (empty) version localization as well, hence the re-read below
+  // Name and subtitle, plus the app-wide privacy policy URL of the primary
+  // storefront (every localization must carry one). Adding a storefront here
+  // makes App Store Connect create its (empty) version localization as well,
+  // hence the re-read below
+  const primaryInfo = infoLocalizations.get("en-US")?.attributes ?? {};
   let addedStorefront = false;
   for (const locale of storefronts) {
     const wanted = listing[locale];
     const info = infoLocalizations.get(locale);
     const infoFields = { name: wanted.name, subtitle: wanted.subtitle };
+    if (primaryInfo.privacyPolicyUrl) {
+      infoFields.privacyPolicyUrl = primaryInfo.privacyPolicyUrl;
+    }
     if (!info) {
       log(`  ${locale}: adding name/subtitle`);
       addedStorefront = true;
@@ -304,12 +310,19 @@ const main = async () => {
   // Version text
   for (const locale of storefronts) {
     const wanted = listing[locale];
+    // The support and marketing URLs are app-wide: every storefront gets the
+    // primary one's
     const versionFields = {
       description: wanted.description,
       keywords: wanted.keywords,
       promotionalText: wanted.promotionalText,
       whatsNew: wanted.whatsNew,
     };
+    for (const url of ["supportUrl", "marketingUrl"]) {
+      if (primary[url]) {
+        versionFields[url] = primary[url];
+      }
+    }
     let localization = versionLocalizations.get(locale);
     if (!localization) {
       log(`  ${locale}: adding version localization`);
@@ -318,12 +331,7 @@ const main = async () => {
           await api("POST", "/appStoreVersionLocalizations", {
             data: {
               type: "appStoreVersionLocalizations",
-              attributes: {
-                locale,
-                ...versionFields,
-                supportUrl: primary.supportUrl,
-                marketingUrl: primary.marketingUrl,
-              },
+              attributes: { locale, ...versionFields },
               relationships: {
                 appStoreVersion: {
                   data: { type: "appStoreVersions", id: version.id },
