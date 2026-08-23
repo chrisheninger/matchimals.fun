@@ -1,15 +1,22 @@
 // Lays captions over the App Store screenshots in screenshots/: a caption band
 // across the top, set in Dimbo on a sticker pill over the main menu's
-// trianglify background, with the screenshot below it framed like a device
-// screen. App Store search shows screenshots as thumbnails, so the caption is
-// sized to read at ~120 px wide. Nothing here touches the simulator — it only
-// composes what `bun run screenshots` already captured.
+// trianglify background, with the screenshot below it. App Store search shows
+// screenshots as thumbnails, so the caption is sized to read at ~120 px wide.
+// Nothing here touches the simulator — it only composes what
+// `bun run screenshots` already captured.
 //
 //   bun run screenshots:caption                         # every set in store/captions, every storefront it has captions for
 //   bun run screenshots:caption --sets "family travel"  # only these sets
 //   bun run screenshots:caption --locales "en-US de-DE" # only these storefronts (failing on a missing caption)
 //   bun run screenshots:caption --displays "iphone-6.5"
+//   bun run screenshots:caption --frame slide           # how the screenshot sits under the band: card (default), bleed or slide
 //   bun run screenshots:caption --out <dir>             # somewhere other than screenshots-captioned/
+//
+// Frames: `card` sets the screenshot on a rounded sticker card (dark line,
+// white edge, shadow) with a margin all round; `bleed` runs it edge to edge,
+// square-cornered, straight under the band and cropped at the bottom of the
+// slot; `slide` gives it slim side margins, rounded top corners and a soft
+// shadow, running off the bottom of the slot.
 //
 // A caption set is store/captions/<set>.json: display ("*" for every display,
 // or a display folder name to override it) → state (A–E, Victory) → App Store
@@ -20,9 +27,12 @@
 // Output lands in screenshots-captioned/<set>/<storefront>/<display>/<n>-<state>.png
 // at the slot's exact pixel size (asserted), ready for
 // `bun run asc:listing --screenshots-dir screenshots-captioned/<set>` or
-// `bun run asc:product-pages`. Needs ImageMagick 7 (`magick`).
+// `bun run asc:product-pages`. screenshots-captioned/<set>/frame.json records
+// the set's frame: a set on disk is always one frame, so switching frames
+// replaces the whole set rather than the storefronts being rendered. Needs
+// ImageMagick 7 (`magick`).
 import { execFile } from "node:child_process";
-import { mkdir, readdir, readFile, rm } from "node:fs/promises";
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -66,6 +76,7 @@ const words = (value) => value?.split(/\s+/).filter(Boolean);
 const onlySets = words(option("--sets"));
 const onlyLocales = words(option("--locales"));
 const onlyDisplays = words(option("--displays"));
+const frame = option("--frame") ?? "card";
 const outDir = path.resolve(root, option("--out") ?? "screenshots-captioned");
 
 const log = (message) => console.log(message);
@@ -212,20 +223,112 @@ const pill = (caption, display) => {
   ];
 };
 
+// The screenshot resized to w×h and composited at (x, y), with its corners
+// rounded by `r` — the top pair only when `openBottom`, for a screenshot that
+// runs off the canvas
+const screenshot = (source, { w, h, x, y, r = 0, openBottom = false }) => [
+  "(",
+  source,
+  "-resize",
+  `${w}x${h}!`,
+  ...(r
+    ? [
+        "(",
+        "+clone",
+        "-fill",
+        "black",
+        "-colorize",
+        "100",
+        "-fill",
+        "white",
+        "-draw",
+        round(0, 0, w - 1, openBottom ? h - 1 + r : h - 1, r),
+        ")",
+        "-alpha",
+        "off",
+        "-compose",
+        "CopyOpacity",
+        "-composite",
+      ]
+    : []),
+  ")",
+  "-compose",
+  "Over",
+  "-geometry",
+  `+${x}+${y}`,
+  "-composite",
+];
+
+// How the screenshot sits under the caption band, as layers over the
+// background; each is sized from the display's width so the two displays
+// read alike
+const FRAMES = {
+  // A rounded sticker card: dark line, white edge, shadow
+  card: (source, display) => {
+    const { width: W, height: H, band } = DISPLAYS[display];
+    const u = W / 1284;
+    const edge = Math.round(16 * u);
+    const line = Math.round(6 * u);
+    const bottom = Math.round(64 * u);
+    const frameH = H - band - bottom;
+    const shotH = frameH - 2 * (edge + line);
+    const shotW = Math.round((shotH * W) / H);
+    const frameW = shotW + 2 * (edge + line);
+    const fx = Math.round((W - frameW) / 2);
+    const fy = band;
+    const r = Math.round(60 * u);
+    return [
+      ...shadow(W, H, fx, fy, fx + frameW, fy + frameH, r + edge + line, u),
+      "-fill",
+      WHITE,
+      "-draw",
+      round(fx, fy, fx + frameW, fy + frameH, r + edge + line),
+      "-fill",
+      DARK,
+      "-draw",
+      round(
+        fx + edge,
+        fy + edge,
+        fx + frameW - edge,
+        fy + frameH - edge,
+        r + line
+      ),
+      ...screenshot(source, {
+        w: shotW,
+        h: shotH,
+        x: fx + edge + line,
+        y: fy + edge + line,
+        r,
+      }),
+    ];
+  },
+  // Edge to edge straight under the band, square, cropped at the bottom
+  bleed: (source, display) => {
+    const { width: W, height: H, band } = DISPLAYS[display];
+    return screenshot(source, { w: W, h: H, x: 0, y: band });
+  },
+  // Slim side margins, rounded top corners and a soft shadow, running off
+  // the bottom
+  slide: (source, display) => {
+    const { width: W, height: H, band } = DISPLAYS[display];
+    const u = W / 1284;
+    const margin = Math.round(0.04 * W);
+    const w = W - 2 * margin;
+    const h = Math.round((w * H) / W);
+    const r = Math.round(48 * u);
+    return [
+      ...shadow(W, H, margin, band, margin + w, band + h, r, u),
+      ...screenshot(source, { w, h, x: margin, y: band, r, openBottom: true }),
+    ];
+  },
+};
+
+if (!FRAMES[frame]) {
+  fail(`--frame must be one of ${Object.keys(FRAMES).join(", ")}`);
+}
+
 const compose = async (source, output, caption, display) => {
-  const { width: W, height: H, band } = DISPLAYS[display];
-  const u = W / 1284;
-  // The framed screenshot: dark line, white sticker edge, shadow
-  const edge = Math.round(16 * u);
-  const line = Math.round(6 * u);
-  const bottom = Math.round(64 * u);
-  const frameH = H - band - bottom;
-  const shotH = frameH - 2 * (edge + line);
-  const shotW = Math.round((shotH * W) / H);
-  const frameW = shotW + 2 * (edge + line);
-  const fx = Math.round((W - frameW) / 2);
-  const fy = band;
-  const r = Math.round(60 * u);
+  const { width: W, height: H } = DISPLAYS[display];
   await exec("magick", [
     backgroundPath,
     "-resize",
@@ -236,47 +339,7 @@ const compose = async (source, output, caption, display) => {
     `${W}x${H}`,
     "-gravity",
     "northwest",
-    ...shadow(W, H, fx, fy, fx + frameW, fy + frameH, r + edge + line, u),
-    "-fill",
-    WHITE,
-    "-draw",
-    round(fx, fy, fx + frameW, fy + frameH, r + edge + line),
-    "-fill",
-    DARK,
-    "-draw",
-    round(
-      fx + edge,
-      fy + edge,
-      fx + frameW - edge,
-      fy + frameH - edge,
-      r + line
-    ),
-    "(",
-    source,
-    "-resize",
-    `${shotW}x${shotH}!`,
-    "(",
-    "+clone",
-    "-fill",
-    "black",
-    "-colorize",
-    "100",
-    "-fill",
-    "white",
-    "-draw",
-    round(0, 0, shotW - 1, shotH - 1, r),
-    ")",
-    "-alpha",
-    "off",
-    "-compose",
-    "CopyOpacity",
-    "-composite",
-    ")",
-    "-compose",
-    "Over",
-    "-geometry",
-    `+${fx + edge + line}+${fy + edge + line}`,
-    "-composite",
+    ...FRAMES[frame](source, display),
     ...pill(caption, display),
     "-strip",
     "-define",
@@ -295,6 +358,13 @@ const compose = async (source, output, caption, display) => {
 };
 
 // --- Sets, storefronts, screenshots ---------------------------------------------------
+
+const manifestPath = (set) => path.join(outDir, set, "frame.json");
+
+// Whatever frame the set on disk holds, if it says
+const recordedFrame = async (set) =>
+  JSON.parse(await readFile(manifestPath(set), "utf8").catch(() => "null"))
+    ?.frame;
 
 const main = async () => {
   await exec("magick", ["-version"]).catch(() =>
@@ -317,10 +387,25 @@ const main = async () => {
   );
 
   const jobs = [];
+  const rendered = new Set();
   for (const set of sets) {
     const captions = JSON.parse(
       await readFile(path.join(captionsDir, `${set}.json`), "utf8")
     );
+    const recorded = await recordedFrame(set);
+    if (recorded && recorded !== frame) {
+      const where = path.relative(root, path.dirname(manifestPath(set)));
+      if (onlyLocales || onlyDisplays) {
+        fail(
+          `${where}/ is ${recorded}-framed — render the whole set to switch it to ${frame}, or pass --out`
+        );
+      }
+      log(`▸ ${set}: replacing the ${recorded}-framed set`);
+      await rm(path.dirname(manifestPath(set)), {
+        recursive: true,
+        force: true,
+      });
+    }
     for (const storefront of storefronts) {
       for (const display of displays) {
         const dir = path.join(screenshotsDir, storefront, display);
@@ -353,6 +438,7 @@ const main = async () => {
         const target = path.join(outDir, set, storefront, display);
         await rm(target, { recursive: true, force: true });
         await mkdir(target, { recursive: true });
+        rendered.add(set);
         for (const { file, text, where } of wanted) {
           jobs.push({
             source: path.join(dir, file),
@@ -368,8 +454,14 @@ const main = async () => {
   if (!jobs.length) {
     fail("Nothing to caption.");
   }
+  for (const set of rendered) {
+    await writeFile(
+      manifestPath(set),
+      `${JSON.stringify({ frame }, null, 2)}\n`
+    );
+  }
 
-  log(`▸ Composing ${jobs.length} screenshots…`);
+  log(`▸ Composing ${jobs.length} screenshots, ${frame}-framed…`);
   const workers = Math.min(4, os.availableParallelism?.() ?? 2);
   let next = 0;
   await Promise.all(
