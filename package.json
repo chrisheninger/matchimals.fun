@@ -12,6 +12,7 @@
     "build:web": "expo export -p web",
     "deploy:ios": "./scripts/deploy-ios.sh",
     "asc:listing": "bun scripts/asc-listing.mjs",
+    "asc:previews": "bun scripts/asc-previews.mjs",
     "screenshots": "./scripts/screenshots.sh",
     "screenshots:locales": "./scripts/locale-screenshots.sh",
     "test": "jest --passWithNoTests",
