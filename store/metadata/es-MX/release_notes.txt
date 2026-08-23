@@ -1,0 +1,2 @@
+Matchimals ahora habla español (y portugués, alemán, francés, italiano, japonés, coreano y chino simplificado): sigue el idioma de tu dispositivo.
+La tarjeta del ganador ahora aparece bien centrada en la pantalla.

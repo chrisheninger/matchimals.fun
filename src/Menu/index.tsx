@@ -8,6 +8,7 @@ import Dialog from "../Dialog";
 import DoneButton from "../Dialog/DoneButton";
 import Settings from "../Settings";
 import type { Moves } from "./DevTools";
+import { caps, t } from "../i18n";
 
 interface MenuProps {
   moves: Moves;
@@ -37,7 +38,7 @@ const Menu = ({
           }}
           style={{ marginTop: 8 }}
         >
-          SETTINGS
+          {caps(t("settings"))}
         </Button>
         <Button
           color={colors.greenLight}
@@ -48,7 +49,7 @@ const Menu = ({
           }}
           style={{ marginTop: 16 }}
         >
-          SCROLL TO CENTER
+          {caps(t("scrollToCenter"))}
         </Button>
         <Button
           color={colors.redLight}
@@ -56,7 +57,7 @@ const Menu = ({
           onPress={backToMainMenu}
           style={{ marginTop: 16 }}
         >
-          EXIT TO MAIN MENU
+          {caps(t("exitToMainMenu"))}
         </Button>
         <DoneButton onPress={hide} style={{ marginTop: 32 }} />
 

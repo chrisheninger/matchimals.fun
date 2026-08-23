@@ -7,6 +7,7 @@ import { colors } from "../constants/colors";
 import Animals from "../Animals";
 import { haptics } from "../haptics";
 import { usePressScale } from "../hooks/pressScale";
+import { displayFont, playersLabel } from "../i18n";
 
 interface PlayerButtonProps {
   number: number;
@@ -71,7 +72,7 @@ const PlayerButton = ({ number, onPress, style }: PlayerButtonProps) => {
   return (
     <TouchableOpacity
       accessibilityRole="button"
-      accessibilityLabel={`${number} player${number === 1 ? "" : "s"}`}
+      accessibilityLabel={playersLabel(number)}
       onPress={(event) => {
         haptics.tap();
         onPress?.(event);
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.grayDark,
     color: colors.grayDark,
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 22,
     lineHeight: 30,
     textAlign: "center",

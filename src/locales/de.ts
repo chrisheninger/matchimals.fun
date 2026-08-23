@@ -1,0 +1,70 @@
+import type { Translations } from "./types";
+
+const de: Translations = {
+  font: "Dimbo",
+
+  howManyPlayers: "Wie viele Spieler?",
+  easyMode: "Leicht",
+  classic: "Klassisch",
+  easyCaption: "Es passt immer eine Karte",
+  classicCaption: "Passt nichts, musst du passen",
+
+  settings: "Einstellungen",
+  music: "Musik",
+  soundEffects: "Soundeffekte",
+  vibration: "Vibration",
+  appIcon: "App-Symbol",
+  yourAnimal: "Dein Tier",
+  done: "Fertig",
+  on: "An",
+  off: "Aus",
+
+  scrollToCenter: "Zur Mitte",
+  exitToMainMenu: "Zum Hauptmenü",
+  wins: "{name} gewinnt!",
+
+  pass: "Passen",
+  menu: "Menü",
+  exit: "Beenden",
+  center: "Mitte",
+
+  a11ySoundEffects: "Soundeffekte",
+  a11yAppIcon: "App-Symbol, aktuell {animal}",
+  a11yChooseAppIcon: "Ein anderes App-Symbol wählen",
+  a11yUseAppIcon: "{animal} als App-Symbol verwenden",
+  a11yPlayAs: "Als {animal} spielen",
+
+  players: { one: "{n} Spieler", other: "{n} Spieler" },
+  animals: {
+    Bat: "Fledermaus",
+    Bear: "Bär",
+    Boar: "Wildschwein",
+    Bunny: "Hase",
+    Butterfly: "Schmetterling",
+    Cat: "Katze",
+    Chick: "Küken",
+    Chicken: "Huhn",
+    Cow: "Kuh",
+    Dog: "Hund",
+    Fox: "Fuchs",
+    Frog: "Frosch",
+    Giraffe: "Giraffe",
+    Gorilla: "Gorilla",
+    Hamster: "Hamster",
+    Hedgehog: "Igel",
+    Koala: "Koala",
+    Lion: "Löwe",
+    Monkey: "Affe",
+    Mouse: "Maus",
+    Owl: "Eule",
+    Panda: "Panda",
+    Penguin: "Pinguin",
+    Pig: "Schwein",
+    Tiger: "Tiger",
+    Turtle: "Schildkröte",
+    Wolf: "Wolf",
+    Zebra: "Zebra",
+  },
+};
+
+export default de;

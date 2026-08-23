@@ -10,6 +10,7 @@ import Reanimated, {
 
 import { colors } from "../constants/colors";
 import { haptics } from "../haptics";
+import { displayFont } from "../i18n";
 
 const SEGMENT_WIDTH = 150;
 const SEGMENT_HEIGHT = 56;
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   label: {
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 26,
     color: colors.grayDark,
   },

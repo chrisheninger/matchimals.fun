@@ -9,6 +9,7 @@ import DoneButton from "../Dialog/DoneButton";
 import Title from "../Dialog/Title";
 import { usePlayerConfig } from "../hooks/players";
 import type { PlayerId } from "../hooks/players";
+import { animalName, caps, t } from "../i18n";
 
 interface AnimalChooserProps {
   isVisible: boolean;
@@ -23,15 +24,17 @@ const AnimalChooser = ({ isVisible, hide, player }: AnimalChooserProps) => {
 
   return (
     <Dialog isVisible={isVisible} hide={hide}>
-      <Title>YOUR ANIMAL</Title>
+      <Title>{caps(t("yourAnimal"))}</Title>
       <ChooserGrid>
         {(Object.keys(Animals) as AnimalName[]).map((animal) => {
           const Icon = Animals[animal];
           return (
             <ChooserItem
               key={animal}
-              label={animal}
-              accessibilityLabel={`Play as the ${animal}`}
+              label={animalName(animal)}
+              accessibilityLabel={t("a11yPlayAs", {
+                animal: animalName(animal),
+              })}
               selected={animal === current}
               radius={CHOOSER_TILE / 2}
               onPress={() => {

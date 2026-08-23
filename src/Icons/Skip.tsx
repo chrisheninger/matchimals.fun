@@ -2,6 +2,7 @@ import React from "react";
 import Svg, { Path } from "svgs";
 
 import { colors } from "../constants/colors";
+import { t } from "../i18n";
 
 interface SkipIconProps {
   size?: number;
@@ -9,7 +10,7 @@ interface SkipIconProps {
 
 // Skip-forward: a play triangle against a bar, for passing a turn
 const SkipIcon = ({ size = 28 }: SkipIconProps) => (
-  <Svg title="Pass" width={size} height={size} viewBox="0 0 32 32">
+  <Svg title={t("pass")} width={size} height={size} viewBox="0 0 32 32">
     <Path
       d="M7 7.5L21.5 16L7 24.5Z"
       fill={colors.grayDark}

@@ -44,6 +44,16 @@ The app icons are rendered from the animal SVGs: `bun run generate:icons` regene
 
 Screenshots for the App Store and this README come from the simulator: `bun run screenshots` builds a Release app, then boots an iPhone 14 Plus (App Store Connect's required 6.5" iPhone slot, 1284 × 2778 px) and an iPad Pro 13-inch (the 13" slot, 2064 × 2752 px) and plays a two-player game on the iPhone and a four-player game on the iPad — the five board snapshots in `src/Matchimals/snapshots.ts` followed by the victory card, with the fixed players from `src/screenshots.ts`, each reached through a `https://www.matchimals.fun/?screenshot=<state>` universal link. Numbered PNGs land in `screenshots/<display>/` in upload order — commit them; they are what gets uploaded to App Store Connect. Add `--skip-build` to reuse the last build.
 
+### Languages
+
+The app follows the device language: English, Spanish (Spain and Latin America), Brazilian Portuguese, German, French, Italian, Japanese, Korean and Simplified Chinese. Every user-facing string lives in `src/locales/<locale>.ts` — English is the source of truth and defines the `Translations` interface, so a missing key in any language is a type error — and components read them through `t()`, `caps()` (titles and buttons are capitalised at render, with the locale's rules), `playersLabel()` and `animalName()` from `src/i18n.ts`. Animal names are translated only at render: the English `AnimalName` stays the key everywhere (state, app icons, screenshot links). The display font Dimbo only has Latin glyphs, so `displayFont` resolves to the platform font (at a weight to match) for Japanese, Korean and Chinese.
+
+- `bun run check:locales` fails on a missing key, a placeholder mismatch, a character Dimbo can't draw, or a string that overflows a fixed-width slot (measured in Dimbo), and checks `store/metadata/` against App Store Connect's limits.
+- `bun run screenshots:locales` photographs every language on the iPhone and iPad simulators (main menu, Settings, the longest animal names on the nameplates and the victory card, the in-game menu, the animal chooser) into `build/locale-screenshots/`, with a contact sheet per language.
+- `bun scripts/translations-review.mjs` regenerates `store/translations-review.md`, every string beside its English source for native speakers to review.
+
+To add a language: copy `src/locales/en.ts`, register it in `src/locales/index.ts` (and in `resolveLocale`'s fallbacks if a bare language should map to it), add it to `CFBundleLocalizations` in `app.json`, create `store/metadata/<App Store locale>/`, then run the three commands above. The App Store listing for each storefront (name, subtitle, keywords, promotional text, description, release notes) is kept in `store/metadata/` and pasted into App Store Connect by hand.
+
 ### Deploying to TestFlight
 
 iOS releases are built and uploaded entirely locally (no EAS subscription or fastlane required):

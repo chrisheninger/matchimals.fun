@@ -1,0 +1,70 @@
+import type { Translations } from "./types";
+
+const zhHans: Translations = {
+  font: "system",
+
+  howManyPlayers: "几个人玩？",
+  easyMode: "简单",
+  classic: "经典",
+  easyCaption: "总有一张牌能放",
+  classicCaption: "能放就放，不能就过",
+
+  settings: "设置",
+  music: "音乐",
+  soundEffects: "音效",
+  vibration: "震动",
+  appIcon: "应用图标",
+  yourAnimal: "你的动物",
+  done: "完成",
+  on: "开",
+  off: "关",
+
+  scrollToCenter: "回到中间",
+  exitToMainMenu: "回主菜单",
+  wins: "{name}赢了！",
+
+  pass: "跳过",
+  menu: "菜单",
+  exit: "退出",
+  center: "居中",
+
+  a11ySoundEffects: "音效",
+  a11yAppIcon: "应用图标，当前为{animal}",
+  a11yChooseAppIcon: "选择其他应用图标",
+  a11yUseAppIcon: "使用{animal}图标",
+  a11yPlayAs: "选择{animal}",
+
+  players: { one: "{n}人", other: "{n}人" },
+  animals: {
+    Bat: "蝙蝠",
+    Bear: "熊",
+    Boar: "野猪",
+    Bunny: "兔子",
+    Butterfly: "蝴蝶",
+    Cat: "猫",
+    Chick: "小鸡",
+    Chicken: "母鸡",
+    Cow: "牛",
+    Dog: "狗",
+    Fox: "狐狸",
+    Frog: "青蛙",
+    Giraffe: "长颈鹿",
+    Gorilla: "大猩猩",
+    Hamster: "仓鼠",
+    Hedgehog: "刺猬",
+    Koala: "考拉",
+    Lion: "狮子",
+    Monkey: "猴子",
+    Mouse: "老鼠",
+    Owl: "猫头鹰",
+    Panda: "熊猫",
+    Penguin: "企鹅",
+    Pig: "猪",
+    Tiger: "老虎",
+    Turtle: "乌龟",
+    Wolf: "狼",
+    Zebra: "斑马",
+  },
+};
+
+export default zhHans;

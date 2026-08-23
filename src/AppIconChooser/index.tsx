@@ -7,6 +7,7 @@ import { CHOOSER_TILE, ChooserGrid, ChooserItem } from "../Chooser";
 import Dialog from "../Dialog";
 import DoneButton from "../Dialog/DoneButton";
 import Title from "../Dialog/Title";
+import { animalName, caps, t } from "../i18n";
 
 interface AppIconChooserProps {
   isVisible: boolean;
@@ -23,13 +24,15 @@ const AppIconChooser = ({
   onChange,
 }: AppIconChooserProps) => (
   <Dialog isVisible={isVisible} hide={hide}>
-    <Title>APP ICON</Title>
+    <Title>{caps(t("appIcon"))}</Title>
     <ChooserGrid>
       {(Object.keys(Animals) as AnimalName[]).map((animal) => (
         <ChooserItem
           key={animal}
-          label={animal}
-          accessibilityLabel={`Use the ${animal} app icon`}
+          label={animalName(animal)}
+          accessibilityLabel={t("a11yUseAppIcon", {
+            animal: animalName(animal),
+          })}
           selected={animal === value}
           radius={tileRadius(CHOOSER_TILE)}
           onPress={() => {

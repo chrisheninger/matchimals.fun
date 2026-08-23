@@ -21,10 +21,11 @@ import Settings from "../Settings";
 import SettingsButton from "../Settings/SettingsButton";
 import Toggle from "../Toggle";
 import type { GameMode } from "../Matchimals/game";
+import { caps, displayFont, t } from "../i18n";
 
 const modeCaptions: Record<GameMode, string> = {
-  easy: "Always a match to make",
-  classic: "Match if you can, pass if not",
+  easy: t("easyCaption"),
+  classic: t("classicCaption"),
 };
 
 const PLAYER_COUNTS = [1, 2, 3, 4];
@@ -33,10 +34,13 @@ const Menu = ({
   startGame,
   gameMode,
   setGameMode,
+  settingsOpen = false,
 }: {
   startGame: (numPlayers: number) => void;
   gameMode: GameMode;
   setGameMode: (mode: GameMode) => void;
+  // Screenshot mode only: opens the Settings dialog (see src/screenshots.ts)
+  settingsOpen?: boolean;
 }) => {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
@@ -47,7 +51,12 @@ const Menu = ({
   const landscape = width > height;
   const tight = compact && landscape;
 
-  const [showSettings, setShowSettings] = useState(false);
+  const [showSettings, setShowSettings] = useState(settingsOpen);
+  useEffect(() => {
+    if (settingsOpen) {
+      setShowSettings(true);
+    }
+  }, [settingsOpen]);
 
   // The dialog wears its own sticker logo, so this one steps aside while
   // Settings (and the icon chooser stacked on it) is open — the timings match
@@ -92,7 +101,7 @@ const Menu = ({
             tight && styles.textTight,
           ]}
         >
-          HOW MANY PLAYERS?
+          {caps(t("howManyPlayers"))}
         </Text>
         <View style={[styles.players, !landscape && styles.playersGrid]}>
           {PLAYER_COUNTS.map((numPlayers) => (
@@ -109,8 +118,8 @@ const Menu = ({
 
         <Toggle
           options={[
-            { label: "EASY MODE", value: "easy" },
-            { label: "CLASSIC", value: "classic" },
+            { label: caps(t("easyMode")), value: "easy" },
+            { label: caps(t("classic")), value: "classic" },
           ]}
           value={gameMode}
           onChange={setGameMode}
@@ -151,7 +160,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.grayDark,
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 48,
     lineHeight: 60,
     marginBottom: 32,
@@ -182,7 +191,7 @@ const styles = StyleSheet.create({
   caption: {
     // The animated fade owns the opacity prop
     color: colors.grayDark,
-    fontFamily: "Dimbo",
+    ...displayFont,
     fontSize: 22,
     lineHeight: 28,
     marginTop: 12,
