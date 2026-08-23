@@ -307,9 +307,9 @@ const setPoster = (id, frame) =>
     },
   });
 
-// Waits for App Store Connect to finish processing, then points the poster
-// frame at the filled board (the frame can only be chosen once the video has
-// been processed)
+// Waits for App Store Connect to finish processing the upload and then the
+// video itself, and points the poster frame at the filled board (the frame
+// can only be chosen once the video has been processed)
 const finish = async (pending) => {
   const deadline = Date.now() + PROCESSING_TIMEOUT_MS;
   const results = [];
@@ -317,34 +317,20 @@ const finish = async (pending) => {
   while (waiting.length) {
     const still = [];
     for (const item of waiting) {
-      const preview = (await api("GET", `/appPreviews/${item.id}`)).data;
-      const state = preview.attributes.assetDeliveryState ?? {};
-      if (state.state === "COMPLETE") {
-        const frame =
-          frameOption ??
-          (preview.attributes.duration
-            ? timecode(preview.attributes.duration * POSTER_AT)
-            : undefined);
+      const { assetDeliveryState, videoDeliveryState } = (
+        await api("GET", `/appPreviews/${item.id}`)
+      ).data.attributes;
+      const states = [assetDeliveryState, videoDeliveryState].filter(Boolean);
+      if (states.length && states.every((s) => s.state === "COMPLETE")) {
         let note = "";
-        if (frame) {
-          await api("PATCH", `/appPreviews/${item.id}`, {
-            data: {
-              type: "appPreviews",
-              id: item.id,
-              attributes: { previewFrameTimeCode: frame },
-            },
-          }).catch((error) => {
-            note = ` (poster frame not set: ${error.message})`;
-          });
-        }
-        log(
-          `  ✓ ${item.label}: COMPLETE${
-            frame ? `, poster at ${frame}` : ""
-          }${note}`
-        );
+        await setPoster(item.id, item.frame).catch((error) => {
+          note = ` (poster frame not set: ${error.message})`;
+        });
+        log(`  ✓ ${item.label}: COMPLETE, poster at ${item.frame}${note}`);
         results.push({ ...item, state: "COMPLETE" });
-      } else if (state.state === "FAILED") {
-        const why = (state.errors ?? [])
+      } else if (states.some((s) => s.state === "FAILED")) {
+        const why = states
+          .flatMap((s) => s.errors ?? [])
           .map((error) => error.description ?? error.code)
           .join("; ");
         log(`  ✖ ${item.label}: FAILED${why ? ` — ${why}` : ""}`);
