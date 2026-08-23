@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 #
-# Capture App Store / README screenshots from the iOS Simulator.
+# Capture App Store / README screenshots from the iOS Simulator, for every
+# storefront language.
 #
-#   bun run screenshots                 # build for the simulator, then capture
-#   bun run screenshots --skip-build    # reuse the last build in ios/build
-#   bun run screenshots --app <path>    # capture from a specific .app bundle
+#   bun run screenshots                      # build for the simulator, then capture
+#   bun run screenshots --skip-build         # reuse the last build in ios/build
+#   bun run screenshots --app <path>         # capture from a specific .app bundle
+#   bun run screenshots --locales "en-US ja" # only these storefronts
 #
 # One simulator per App Store Connect display class, at the pixel size its
 # slot accepts: the required iPhone slot is the 6.5" display (1284 × 2778 —
@@ -13,9 +15,12 @@
 # two-player game and the iPad a four-player one: the five board snapshots
 # from src/Matchimals/snapshots.ts, then the victory card, each reached with a
 # `https://www.matchimals.fun/?screenshot=<state>` universal link (see
-# src/screenshots.ts). PNGs land in screenshots/<display>/<n>-<state>.png, in
-# upload order, and every capture is checked against the slot's pixel size.
-# The status bar is overridden Apple-style (9:41, full battery) while capturing.
+# src/screenshots.ts). The simulator's language is switched per storefront
+# (the folders use App Store Connect's locale codes, matching store/metadata),
+# so the nameplates and the victory card come out translated. PNGs land in
+# screenshots/<storefront>/<display>/<n>-<state>.png, in upload order, and
+# every capture is checked against the slot's pixel size. The status bar is
+# overridden Apple-style (9:41, full battery) while capturing.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -25,6 +30,19 @@ export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 TARGETS=(
   "iphone-6.5|iPhone 14 Plus|1284x2778|twoPlayer"
   "ipad-13|iPad Pro 13-inch (M5)|2064x2752|fourPlayer"
+)
+# storefront (App Store Connect locale) | iOS language
+LOCALES=(
+  "en-US|en"
+  "es-ES|es-ES"
+  "es-MX|es-MX"
+  "pt-BR|pt-BR"
+  "de-DE|de"
+  "fr-FR|fr"
+  "it|it"
+  "ja|ja"
+  "ko|ko"
+  "zh-Hans|zh-Hans"
 )
 STATES=(A B C D E Victory)
 BUNDLE_ID=native.matchimals.fun
@@ -45,6 +63,16 @@ while [[ $# -gt 0 ]]; do
     --app)
       build=false
       APP="$2"
+      shift
+      ;;
+    --locales)
+      wanted=" $2 "
+      kept=()
+      for entry in "${LOCALES[@]}"; do
+        [[ "$wanted" == *" ${entry%%|*} "* ]] && kept+=("$entry")
+      done
+      [[ ${#kept[@]} -gt 0 ]] || err "No storefront matches \"$2\"."
+      LOCALES=("${kept[@]}")
       shift
       ;;
     *) err "Unknown option: $1" ;;
@@ -84,14 +112,12 @@ pixels_of() {
 }
 
 for target in "${TARGETS[@]}"; do
-  IFS='|' read -r folder device pixels prefix <<<"$target"
+  IFS='|' read -r display device pixels prefix <<<"$target"
   udid=$(udid_for "$device")
   if [[ -z "$udid" ]]; then
     echo "▸ Creating simulator $device…"
     udid=$(create_device "$device")
   fi
-  rm -rf "${OUT:?}/$folder"
-  mkdir -p "$OUT/$folder"
 
   was_booted=$(xcrun simctl list devices | grep -F "$udid" | grep -c Booted || true)
   if [[ "$was_booted" == "0" ]]; then
@@ -104,24 +130,41 @@ for target in "${TARGETS[@]}"; do
     --batteryLevel 100 --wifiBars 3 --cellularBars 4 --operatorName "" >/dev/null
   xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
   xcrun simctl install "$udid" "$APP"
-  xcrun simctl launch "$udid" "$BUNDLE_ID" >/dev/null
-  # A fresh simulator shows first-boot notifications for a few seconds
-  sleep 8
 
-  n=0
-  for suffix in "${STATES[@]}"; do
-    n=$((n + 1))
-    state="$prefix$suffix"
-    file="$OUT/$folder/$n-$state.png"
-    xcrun simctl openurl "$udid" "https://www.matchimals.fun/?screenshot=$state"
-    sleep "$SETTLE"
-    xcrun simctl io "$udid" screenshot "$file" >/dev/null 2>&1
-    actual=$(pixels_of "$file")
-    [[ "$actual" == "$pixels" ]] ||
-      err "$file is ${actual} px; App Store Connect wants ${pixels} for $folder."
-    echo "  ✓ $file"
+  for entry in "${LOCALES[@]}"; do
+    IFS='|' read -r storefront language <<<"$entry"
+    folder="$OUT/$storefront/$display"
+    rm -rf "${folder:?}"
+    mkdir -p "$folder"
+    echo "▸ $device · $storefront"
+
+    xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
+    xcrun simctl spawn "$udid" defaults write "Apple Global Domain" \
+      AppleLanguages -array "$language" >/dev/null
+    xcrun simctl spawn "$udid" defaults write "Apple Global Domain" \
+      AppleLocale -string "${language//-/_}" >/dev/null
+    xcrun simctl launch "$udid" "$BUNDLE_ID" >/dev/null
+    # A fresh simulator shows first-boot notifications for a few seconds
+    sleep 6
+
+    n=0
+    for suffix in "${STATES[@]}"; do
+      n=$((n + 1))
+      state="$prefix$suffix"
+      file="$folder/$n-$state.png"
+      xcrun simctl openurl "$udid" "https://www.matchimals.fun/?screenshot=$state"
+      sleep "$SETTLE"
+      xcrun simctl io "$udid" screenshot "$file" >/dev/null 2>&1
+      actual=$(pixels_of "$file")
+      [[ "$actual" == "$pixels" ]] ||
+        err "$file is ${actual} px; App Store Connect wants ${pixels} for $display."
+      echo "  ✓ $file"
+    done
   done
 
+  xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
+  xcrun simctl spawn "$udid" defaults delete "Apple Global Domain" AppleLanguages >/dev/null 2>&1 || true
+  xcrun simctl spawn "$udid" defaults delete "Apple Global Domain" AppleLocale >/dev/null 2>&1 || true
   xcrun simctl status_bar "$udid" clear >/dev/null
   if [[ "$was_booted" == "0" ]]; then
     xcrun simctl shutdown "$udid"
