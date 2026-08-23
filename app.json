@@ -3,7 +3,7 @@
     "name": "Matchimals",
     "slug": "matchimals",
     "scheme": "matchimals",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "orientation": "default",
     "icon": "./assets/app-icons/Icon-App-1024x1024.png",
     "platforms": [
