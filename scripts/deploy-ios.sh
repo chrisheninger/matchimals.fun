@@ -3,7 +3,8 @@
 # Deploy the iOS app to TestFlight, entirely on this machine.
 #
 #   bun run deploy:ios
-#   bun run deploy:ios --upload-only   # retry the upload of the last archive
+#   bun run deploy:ios --upload-only     # retry the upload of the last archive
+#   bun run deploy:ios --xcode-account   # sign in with Xcode's Apple ID, not the API key
 #
 # Pipeline: guardrails → bump ios.buildNumber in app.json (+ commit) →
 # expo prebuild → xcodebuild archive → xcodebuild -exportArchive with
@@ -23,7 +24,17 @@ cd "$(dirname "$0")/.."
 export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 
 upload_only=false
-[[ "${1:-}" == "--upload-only" ]] && upload_only=true
+use_key=true
+for arg in "$@"; do
+  case "$arg" in
+    --upload-only) upload_only=true ;;
+    --xcode-account) use_key=false ;;
+    *)
+      echo "✖ Unknown option: $arg" >&2
+      exit 1
+      ;;
+  esac
+done
 
 err() {
   echo "✖ $1" >&2
@@ -35,6 +46,9 @@ err() {
 branch=$(git rev-parse --abbrev-ref HEAD)
 [[ "$branch" == "main" ]] || err "Deploys must run from main (currently on '$branch')."
 [[ -z "$(git status --porcelain)" ]] || err "Working tree is dirty — commit or stash first."
+git fetch -q origin main
+[[ "$(git rev-parse HEAD)" == "$(git rev-parse origin/main)" ]] ||
+  err "Local main is not origin/main — pull (or push) first so the build matches what's on GitHub."
 
 echo "▸ Typechecking…"
 bun run typecheck
@@ -47,7 +61,7 @@ ARCHIVE_PATH="build/Matchimals.xcarchive"
 
 ASC_ENV="$HOME/.private_keys/matchimals-asc.env"
 AUTH=()
-if [[ -f "$ASC_ENV" ]]; then
+if $use_key && [[ -f "$ASC_ENV" ]]; then
   # shellcheck source=/dev/null
   source "$ASC_ENV"
   ASC_KEY_PATH="$HOME/.private_keys/AuthKey_${ASC_KEY_ID:-}.p8"
