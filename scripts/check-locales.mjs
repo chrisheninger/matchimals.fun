@@ -159,6 +159,9 @@ for (const [code, strings] of Object.entries(locales)) {
     // this only warns); chooser labels sit under 72px tiles with 10px margins
     slots.push([`animals.${animal} (nameplate)`, name, 24, 104, false]);
     slots.push([`animals.${animal} (chooser)`, name, 20, 92, false]);
+    // ShareCard plate: PLATE_WIDTH 300 − borders 8 − animal 100 − padding 40
+    // at 30px (the name shrinks to fit, so this only warns)
+    slots.push([`animals.${animal} (share plate)`, name, 30, 152, false]);
   }
   for (const [label, text, px, budget, hard] of slots) {
     const width = Math.round(measure(text, px, dimbo));

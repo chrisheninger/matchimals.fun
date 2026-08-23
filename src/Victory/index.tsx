@@ -28,8 +28,7 @@ import { Portal } from "../Overlay";
 import ShareCard, { SHARE_CARD_WIDTH } from "../ShareCard";
 import { shareVictory } from "../share";
 
-// Tagged so the site's analytics can tell shared victories apart
-const SHARE_URL = "https://www.matchimals.com/?ref=victory";
+const SHARE_URL = "https://www.matchimals.com";
 
 interface VictoryProps {
   backToMainMenu: () => void;

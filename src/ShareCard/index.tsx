@@ -1,6 +1,5 @@
-import React, { forwardRef, useMemo, useState } from "react";
+import React, { forwardRef, useMemo } from "react";
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
-import type { LayoutChangeEvent } from "react-native";
 
 import Animals from "../Animals";
 import Card from "../Card";
@@ -22,14 +21,48 @@ export const SHARE_CARD_HEIGHT = 1350;
 // the sticker logo across its top edge like the dialogs do
 const MARGIN = 40;
 const CARD_TOP = 110;
+const CARD_WIDTH = SHARE_CARD_WIDTH - MARGIN * 2;
+const CARD_HEIGHT = SHARE_CARD_HEIGHT - CARD_TOP - MARGIN;
 const PADDING = 32;
 const LOGO_WIDTH = 520;
 const LOGO_HEIGHT = logoHeight(LOGO_WIDTH, true);
 const LOGO_OVERHANG = Math.round(LOGO_HEIGHT / 2);
 const CONTENT_TOP = LOGO_OVERHANG + 16;
 const AVATAR = 196;
-// The finished board floats in its frame with table showing around it
+const FOOTER_LINE_HEIGHT = 48;
+
+// The table takes whatever the header and the footer leave of the card.
+// Everything on it is sized up front: the board is fitted to a frame that
+// already has the nameplate column taken out of it, and nothing waits on a
+// layout pass.
+const TABLE_MARGIN_TOP = 24;
+const TABLE_MARGIN_BOTTOM = 20;
+const TABLE_BORDER = 4;
+const TABLE_WIDTH = CARD_WIDTH - PADDING * 2 - TABLE_BORDER * 2;
+const TABLE_HEIGHT =
+  CARD_HEIGHT -
+  CONTENT_TOP -
+  PADDING -
+  AVATAR -
+  TABLE_MARGIN_TOP -
+  TABLE_MARGIN_BOTTOM -
+  FOOTER_LINE_HEIGHT -
+  TABLE_BORDER * 2;
+// Table showing round the board and the plates, and between them
+const TABLE_INSET = 24;
+// One plate size whatever the name or the player count: a column of two
+// plates takes exactly the room a column of four does
+const PLATE_WIDTH = 300;
+const PLATE_HEIGHT = 108;
+const PLATE_BORDER = 4;
+const PLATE_ANIMAL = 100;
+const PLATE_PADDING = 20;
+const BOARD_FRAME_WIDTH = TABLE_WIDTH - TABLE_INSET * 3 - PLATE_WIDTH;
+const BOARD_FRAME_HEIGHT = TABLE_HEIGHT - TABLE_INSET * 2;
+// The board floats in its frame with more of the table showing round it
 const BOARD_INSET = 24;
+const BOARD_MAX_WIDTH = BOARD_FRAME_WIDTH - BOARD_INSET * 2;
+const BOARD_MAX_HEIGHT = BOARD_FRAME_HEIGHT - BOARD_INSET * 2;
 
 interface ShareCardProps {
   cells: (CardType | null)[];
@@ -79,25 +112,13 @@ const cropCells = (cells: (CardType | null)[]) => {
 // The real cards at their real size, scaled down as one layer to fit the
 // frame, so the art stays the art the players just looked at
 const BoardCrop = ({ cells }: { cells: (CardType | null)[] }) => {
-  const [frame, setFrame] = useState<{ width: number; height: number }>();
   const crop = useMemo(() => cropCells(cells), [cells]);
-
-  const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
-    const { width, height } = nativeEvent.layout;
-    setFrame({ width, height });
-  };
-
-  let scale = 0;
-  if (frame && crop.cards.length) {
-    scale = Math.min(
-      1,
-      (frame.width - BOARD_INSET * 2) / crop.width,
-      (frame.height - BOARD_INSET * 2) / crop.height
-    );
-  }
+  const scale = crop.cards.length
+    ? Math.min(1, BOARD_MAX_WIDTH / crop.width, BOARD_MAX_HEIGHT / crop.height)
+    : 0;
 
   return (
-    <View style={styles.boardFrame} onLayout={onLayout}>
+    <View style={styles.boardFrame}>
       {scale > 0 ? (
         <View
           style={{ width: crop.width * scale, height: crop.height * scale }}
@@ -153,7 +174,7 @@ const Plate = ({
         <Icon width={72} height={72} />
       </View>
       <View style={styles.plateDetails}>
-        <Text style={styles.plateName}>
+        <Text style={styles.plateName} numberOfLines={1} adjustsFontSizeToFit>
           {animalName(playerConfig[player]?.animal)}
         </Text>
         <Text style={styles.plateScore}>{score}</Text>
@@ -262,18 +283,16 @@ const ShareCard = forwardRef<View, ShareCardProps>(
             style={styles.table}
             imageStyle={styles.tableTexture}
           >
-            <View style={styles.tableTop}>
-              <BoardCrop cells={cells} />
-              <View style={styles.plates}>
-                {standings.map((player) => (
-                  <Plate
-                    key={player}
-                    player={player}
-                    score={players[player].score}
-                    playerConfig={playerConfig}
-                  />
-                ))}
-              </View>
+            <BoardCrop cells={cells} />
+            <View style={styles.plates}>
+              {standings.map((player) => (
+                <Plate
+                  key={player}
+                  player={player}
+                  score={players[player].score}
+                  playerConfig={playerConfig}
+                />
+              ))}
             </View>
           </ImageBackground>
           <Text style={styles.footer}>
@@ -302,8 +321,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: CARD_TOP,
     left: MARGIN,
-    width: SHARE_CARD_WIDTH - MARGIN * 2,
-    height: SHARE_CARD_HEIGHT - CARD_TOP - MARGIN,
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
     borderRadius: 32,
   },
   // The white card and its content are separate layers so the confetti can
@@ -324,6 +343,7 @@ const styles = StyleSheet.create({
     height: LOGO_HEIGHT,
   },
   header: {
+    height: AVATAR,
     flexDirection: "row",
     alignItems: "center",
     gap: 24,
@@ -360,58 +380,55 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
   table: {
-    flex: 1,
-    marginTop: 24,
-    marginBottom: 20,
+    width: TABLE_WIDTH + TABLE_BORDER * 2,
+    height: TABLE_HEIGHT + TABLE_BORDER * 2,
+    marginTop: TABLE_MARGIN_TOP,
+    marginBottom: TABLE_MARGIN_BOTTOM,
+    padding: TABLE_INSET,
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: 24,
-    borderWidth: 4,
+    borderWidth: TABLE_BORDER,
     borderColor: "#2A1A12",
     overflow: "hidden",
   },
-  // Sized by the header above it, so the texture has to be told to fill: an
-  // ImageBackground without its own width and height keeps the asset's pixel
-  // size on web. The percentages resolve against the content box, which is
-  // why the inset lives on the view inside rather than here.
+  // The texture has to be told to fill: an ImageBackground without its own
+  // width and height keeps the asset's pixel size on web
   tableTexture: {
-    width: "100%",
-    height: "100%",
-  },
-  tableTop: {
-    flex: 1,
-    flexDirection: "row",
-    padding: BOARD_INSET,
+    width: TABLE_WIDTH,
+    height: TABLE_HEIGHT,
   },
   boardFrame: {
-    flex: 1,
+    width: BOARD_FRAME_WIDTH,
+    height: BOARD_FRAME_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
   },
   plates: {
-    justifyContent: "center",
-    marginLeft: BOARD_INSET,
+    width: PLATE_WIDTH,
+    marginLeft: TABLE_INSET,
     gap: 12,
   },
   plate: {
+    height: PLATE_HEIGHT,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    borderRadius: 54,
+    borderRadius: PLATE_HEIGHT / 2,
     borderColor: "#fff",
-    borderWidth: 4,
+    borderWidth: PLATE_BORDER,
   },
   plateAnimal: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: PLATE_ANIMAL,
+    height: PLATE_ANIMAL,
+    borderRadius: PLATE_ANIMAL / 2,
     justifyContent: "center",
     alignItems: "center",
   },
   plateDetails: {
-    minWidth: 150,
-    height: 100,
+    flex: 1,
     justifyContent: "center",
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingHorizontal: PLATE_PADDING,
   },
   plateName: {
     color: colors.grayDark,
@@ -431,7 +448,7 @@ const styles = StyleSheet.create({
     color: colors.grayDark,
     ...displayFont,
     fontSize: 40,
-    lineHeight: 48,
+    lineHeight: FOOTER_LINE_HEIGHT,
     textAlign: "center",
   },
   footerTagline: {
