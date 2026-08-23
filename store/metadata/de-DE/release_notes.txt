@@ -1,2 +1,7 @@
 Matchimals spricht jetzt Deutsch (und Spanisch, Portugiesisch, Französisch, Italienisch, Japanisch, Koreanisch und vereinfachtes Chinesisch) – es folgt der Sprache deines Geräts.
-Die Siegerkarte sitzt jetzt sauber in der Mitte des Bildschirms.
+Neuer Look – ein Logo im Sticker-Stil, neu gestaltete Menüs und Dialoge und nummerierte Spieler-Buttons, damit der Spielstart klarer ist als je zuvor.
+Spür das Spiel – Matchimals vibriert jetzt, wenn du eine Karte aufnimmst, ein Paar findest oder eine Karte zurück auf den Stapel springt. (Lieber leise? In den Einstellungen gibt es einen Schalter für Vibration.)
+Ehrenrunde – ein neuer Jubelbildschirm krönt den Sieger, wenn die letzte Karte gespielt ist.
+Dein Tier, dein Symbol – du kannst jetzt dein Lieblingstier als App-Symbol für den Home-Bildschirm wählen.
+
+Außerdem kleine Fehlerbehebungen und Leistungsverbesserungen.

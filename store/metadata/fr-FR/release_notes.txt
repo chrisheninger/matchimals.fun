@@ -1,2 +1,7 @@
 Matchimals parle maintenant français (et espagnol, portugais, allemand, italien, japonais, coréen et chinois simplifié) – il suit la langue de ton appareil.
-La carte du gagnant est maintenant bien centrée à l’écran.
+Nouveau look – un logo façon sticker, des menus et des boîtes de dialogue repensés, et des boutons de joueurs numérotés pour que lancer une partie soit plus clair que jamais.
+Sens le jeu – Matchimals vibre maintenant quand tu prends une carte, quand tu fais une paire ou quand une carte rebondit vers la pioche. (Tu préfères le silence ? Il y a un interrupteur Vibration dans les Réglages.)
+Tour d’honneur – un nouvel écran de fête couronne le gagnant quand la dernière carte est posée.
+Ton animal, ton icône – tu peux maintenant choisir ton animal préféré comme icône de l’app sur ton écran d’accueil.
+
+Et aussi quelques corrections de bugs et améliorations des performances.

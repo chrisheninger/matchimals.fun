@@ -1,2 +1,7 @@
 O Matchimals agora fala português (e espanhol, alemão, francês, italiano, japonês, coreano e chinês simplificado) — ele segue o idioma do seu aparelho.
-O cartão do vencedor agora aparece certinho no meio da tela.
+Visual novo — logo em estilo adesivo, menus e caixas de diálogo redesenhados e botões de jogadores numerados, para começar uma partida ficar mais claro do que nunca.
+Sinta o jogo — o Matchimals agora vibra quando você pega uma carta, faz uma combinação ou uma carta volta para o baralho. (Prefere silêncio? Tem uma chave de Vibração em Ajustes.)
+Volta olímpica — uma nova tela de comemoração coroa o vencedor quando a última carta é jogada.
+Seu bicho, seu ícone — agora dá para escolher seu bicho favorito como ícone do app na tela de início.
+
+Também inclui pequenas correções de erros e melhorias de desempenho.
