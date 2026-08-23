@@ -22,3 +22,6 @@ npm-debug.log
 .metro-health-check*
 
 .env
+
+# App Store Connect API keys never belong in the repo
+*.p8
