@@ -1,0 +1,10 @@
+{
+  "*": {
+    "A": { "en-US": "Match the animals,\nscore the points" },
+    "B": { "en-US": "Easy mode:\nalways a match" },
+    "C": { "en-US": "1–4 players\non one screen" },
+    "D": { "en-US": "28 animals\nto play as" },
+    "E": { "en-US": "No ads. No purchases.\nEver." },
+    "Victory": { "en-US": "Crown the winner" }
+  }
+}
