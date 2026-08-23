@@ -126,6 +126,23 @@ fi
 # --- Export & upload to App Store Connect ------------------------------------
 
 mkdir -p build
+# With the API key, signing is manual against the "Matchimals App Store"
+# profile (created through the App Store Connect API for the local Apple
+# Distribution certificate) — Xcode's automatic path insists on a
+# cloud-managed certificate this key has no permission for. The Xcode-account
+# route keeps automatic signing.
+SIGNING=""
+if [[ ${#AUTH[@]} -gt 0 ]]; then
+  SIGNING="  <key>signingStyle</key>
+  <string>manual</string>
+  <key>signingCertificate</key>
+  <string>Apple Distribution</string>
+  <key>provisioningProfiles</key>
+  <dict>
+    <key>native.matchimals.fun</key>
+    <string>Matchimals App Store</string>
+  </dict>"
+fi
 cat > build/ExportOptions.plist <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -137,6 +154,7 @@ cat > build/ExportOptions.plist <<EOF
   <string>upload</string>
   <key>teamID</key>
   <string>${TEAM_ID}</string>
+${SIGNING}
   <key>uploadSymbols</key>
   <true/>
   <key>manageAppVersionAndBuildNumber</key>
