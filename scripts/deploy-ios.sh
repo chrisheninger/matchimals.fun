@@ -9,11 +9,14 @@
 # expo prebuild → xcodebuild archive → xcodebuild -exportArchive with
 # destination:upload (sends the build to App Store Connect) → tag + push.
 #
-# Signing and the upload rely on the Apple ID signed into Xcode (Settings →
-# Accounts) for the team in app.json — the archive is signed with the Apple
-# Development identity and -exportArchive re-signs it with Apple Distribution,
-# minting certificates and profiles as needed. Nothing secret lives in the repo
-# or on disk.
+# Signing and the upload authenticate with an App Store Connect API key when
+# one is installed (~/.private_keys/matchimals-asc.env naming ASC_KEY_ID and
+# ASC_ISSUER_ID, beside its AuthKey_<id>.p8), and otherwise with the Apple ID
+# signed into Xcode (Settings → Accounts) for the team in app.json — whose
+# session lapses after a few hours. Either way the archive is signed with the
+# Apple Development identity and -exportArchive re-signs it with Apple
+# Distribution, minting certificates and profiles as needed. Nothing secret
+# lives in the repo.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -39,6 +42,26 @@ bun run typecheck
 VERSION=$(bun -e 'console.log((await Bun.file("app.json").json()).expo.version)')
 TEAM_ID=$(bun -e 'console.log((await Bun.file("app.json").json()).expo.ios.appleTeamId)')
 ARCHIVE_PATH="build/Matchimals.xcarchive"
+
+# --- App Store Connect authentication -----------------------------------------
+
+ASC_ENV="$HOME/.private_keys/matchimals-asc.env"
+AUTH=()
+if [[ -f "$ASC_ENV" ]]; then
+  # shellcheck source=/dev/null
+  source "$ASC_ENV"
+  ASC_KEY_PATH="$HOME/.private_keys/AuthKey_${ASC_KEY_ID:-}.p8"
+  if [[ -n "${ASC_KEY_ID:-}" && -n "${ASC_ISSUER_ID:-}" && -f "$ASC_KEY_PATH" ]]; then
+    AUTH=(-authenticationKeyPath "$ASC_KEY_PATH"
+      -authenticationKeyID "$ASC_KEY_ID"
+      -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+  fi
+fi
+if [[ ${#AUTH[@]} -gt 0 ]]; then
+  echo "▸ Authenticating with the App Store Connect API key in ~/.private_keys"
+else
+  echo "▸ Authenticating with the Apple ID signed into Xcode"
+fi
 
 if $upload_only; then
   # The previous run archived but the upload failed (typically the Apple ID
@@ -81,7 +104,7 @@ else
     -destination 'generic/platform=iOS' \
     -archivePath "$ARCHIVE_PATH" \
     archive \
-    -allowProvisioningUpdates \
+    -allowProvisioningUpdates ${AUTH[@]+"${AUTH[@]}"} \
     DEVELOPMENT_TEAM="$TEAM_ID" \
     CODE_SIGN_IDENTITY="Apple Development"
 fi
@@ -113,7 +136,7 @@ xcodebuild -exportArchive \
   -archivePath "$ARCHIVE_PATH" \
   -exportOptionsPlist build/ExportOptions.plist \
   -exportPath build/export \
-  -allowProvisioningUpdates
+  -allowProvisioningUpdates ${AUTH[@]+"${AUTH[@]}"}
 
 # --- Tag & push ---------------------------------------------------------------
 

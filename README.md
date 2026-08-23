@@ -62,9 +62,9 @@ iOS releases are built and uploaded entirely locally (no EAS subscription or fas
 bun run deploy:ios
 ```
 
-The script (`scripts/deploy-ios.sh`) auto-increments `ios.buildNumber` in `app.json` (and commits the bump), runs `expo prebuild`, archives with `xcodebuild`, uploads the build straight to App Store Connect, then tags the commit (`ios-v<version>-<build>`) and pushes. It refuses to run unless you're on a clean `main` and the typecheck passes. If the upload step fails (most often because the Apple ID in Xcode needs signing in again), fix that and run `bun run deploy:ios --upload-only` to re-upload the archive it already built. App version bumps (`expo.version`) are still manual — edit `app.json` before deploying a new release.
+The script (`scripts/deploy-ios.sh`) auto-increments `ios.buildNumber` in `app.json` (and commits the bump), runs `expo prebuild`, archives with `xcodebuild`, uploads the build straight to App Store Connect, then tags the commit (`ios-v<version>-<build>`) and pushes. It refuses to run unless you're on a clean `main` and the typecheck passes. If the upload step fails, fix the cause and run `bun run deploy:ios --upload-only` to re-upload the archive it already built. App version bumps (`expo.version`) are still manual — edit `app.json` before deploying a new release.
 
-Signing and the upload use the Apple ID signed into Xcode (Xcode → Settings → Accounts) for the team in `app.json`; Xcode creates the certificates and profiles it needs. No keys or tokens are stored in the repo or on disk.
+Signing and the upload authenticate with an App Store Connect API key if one is installed on the Mac: `~/.private_keys/matchimals-asc.env` sets `ASC_KEY_ID` and `ASC_ISSUER_ID`, and the key's `AuthKey_<id>.p8` sits beside it (ASC → Users and Access → Integrations → App Store Connect API; the App Manager role is enough). Without one, the Apple ID signed into Xcode (Xcode → Settings → Accounts) is used for the team in `app.json` — that session lapses after a few hours, which is the usual reason an upload fails. Xcode creates the certificates and profiles it needs either way. Nothing secret is stored in the repo.
 
 The web version deploys automatically via Netlify when `main` is pushed (`bun run build:web` for a local static export to `dist/`).
 
