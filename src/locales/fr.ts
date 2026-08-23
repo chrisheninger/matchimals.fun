@@ -22,6 +22,10 @@ const fr: Translations = {
   scrollToCenter: "Recentrer",
   exitToMainMenu: "Menu principal",
   wins: "{name} a gagné !",
+  share: "Partager",
+  shareMessage:
+    "{name} a gagné {scores} sur Matchimals {emoji} Gratuit et sans pub : {url}",
+  shareFooter: "gratuit · sans pub",
 
   pass: "Passer",
   menu: "Menu",

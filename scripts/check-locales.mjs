@@ -132,6 +132,7 @@ for (const [code, strings] of Object.entries(locales)) {
     ["settings (button)", upper(strings.settings, code), 32, 224, true],
     ["scrollToCenter", upper(strings.scrollToCenter, code), 32, 224, true],
     ["exitToMainMenu", upper(strings.exitToMainMenu, code), 32, 224, true],
+    ["share", upper(strings.share, code), 32, 224, true],
     ["done", upper(strings.done, code), 32, 264, true],
     // Settings rows: label beside a 96px switch in a 344px card, 28px
     ["soundEffects", strings.soundEffects, 28, 236, false],
@@ -158,6 +159,9 @@ for (const [code, strings] of Object.entries(locales)) {
     // this only warns); chooser labels sit under 72px tiles with 10px margins
     slots.push([`animals.${animal} (nameplate)`, name, 24, 104, false]);
     slots.push([`animals.${animal} (chooser)`, name, 20, 92, false]);
+    // ShareCard plate: PLATE_WIDTH 300 − borders 8 − animal 100 − padding 40
+    // at 30px (the name shrinks to fit, so this only warns)
+    slots.push([`animals.${animal} (share plate)`, name, 30, 152, false]);
   }
   for (const [label, text, px, budget, hard] of slots) {
     const width = Math.round(measure(text, px, dimbo));

@@ -23,6 +23,9 @@ Titles and buttons are shown in CAPITALS in the app (applied at render with the 
 | `scrollToCenter` | Scroll to center | Ir al centro | Ir al centro | Ir para o centro | Zur Mitte | Recentrer | Vai al centro | 中央にもどる | 가운데로 | 回到中间 |
 | `exitToMainMenu` | Exit to main menu | Salir al menú | Salir al menú | Sair para o menu | Zum Hauptmenü | Menu principal | Menu principale | メニューへ | 메인 메뉴로 | 回主菜单 |
 | `wins` | {name} wins! | ¡{name} gana! | ¡{name} gana! | {name} venceu! | {name} gewinnt! | {name} a gagné ! | {name} vince! | {name}のかち！ | {name} 승리! | {name}赢了！ |
+| `share` | Share | Compartir | Compartir | Compartilhar | Teilen | Partager | Condividi | 共有 | 공유 | 分享 |
+| `shareMessage` | {name} won {scores} in Matchimals {emoji} Free, no ads: {url} | {name} ganó {scores} en Matchimals {emoji} Gratis y sin anuncios: {url} | {name} ganó {scores} en Matchimals {emoji} Gratis y sin anuncios: {url} | {name} venceu por {scores} no Matchimals {emoji} Grátis e sem anúncios: {url} | {name} gewinnt {scores} bei Matchimals {emoji} Kostenlos und ohne Werbung: {url} | {name} a gagné {scores} sur Matchimals {emoji} Gratuit et sans pub : {url} | {name} ha vinto {scores} a Matchimals {emoji} Gratis e senza pubblicità: {url} | Matchimalsで{name}が{scores}でかち！{emoji} 無料・広告なし：{url} | {name} Matchimals에서 {scores}로 승리! {emoji} 무료, 광고 없음: {url} | {name}在Matchimals中以{scores}获胜！{emoji} 免费、无广告：{url} |
+| `shareFooter` | free · no ads | gratis · sin anuncios | gratis · sin anuncios | grátis · sem anúncios | kostenlos · ohne Werbung | gratuit · sans pub | gratis · senza pubblicità | 無料 · 広告なし | 무료 · 광고 없음 | 免费 · 无广告 |
 | `pass` | Pass | Pasar | Pasar | Passar | Passen | Passer | Passa | パス | 패스 | 跳过 |
 | `menu` | Menu | Menú | Menú | Menu | Menü | Menu | Menu | メニュー | 메뉴 | 菜单 |
 | `exit` | Exit | Salir | Salir | Sair | Beenden | Quitter | Esci | やめる | 나가기 | 退出 |

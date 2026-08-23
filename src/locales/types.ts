@@ -28,6 +28,11 @@ export interface Translations {
   scrollToCenter: string;
   exitToMainMenu: string;
   wins: string;
+  share: string;
+  // The line that travels with a shared victory picture
+  shareMessage: string;
+  // The picture's footer, after the site's address
+  shareFooter: string;
 
   pass: string;
   menu: string;

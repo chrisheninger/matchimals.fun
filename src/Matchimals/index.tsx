@@ -282,6 +282,7 @@ const Matchimals = ({
           backToMainMenu={backToMainMenu}
           player={ctx.gameover}
           players={G.players}
+          cells={G.cells}
         />
       ) : null}
       <Menu
