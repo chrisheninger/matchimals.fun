@@ -24,7 +24,8 @@ const en: Translations = {
   wins: "{name} wins!",
   noCardFits: "No card left fits the board",
   share: "Share",
-  shareMessage: "{name} won {scores} in Matchimals {emoji} Free, no ads: {url}",
+  shareMessage:
+    "I just won in Matchimals! {emoji} Play this cute card game for free — no ads! {url}",
   shareFooter: "free · no ads",
 
   pass: "Pass",

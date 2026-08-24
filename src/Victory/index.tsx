@@ -77,16 +77,9 @@ const Victory = ({
     }
     setSharing(true);
     const name = animalName(animal);
-    // Winner first, so the line reads like a final score
-    const scores = Object.values(players)
-      .map(({ score }) => score)
-      .sort((a, b) => b - a)
-      .join("–");
     try {
       await shareVictory(shareCardRef, {
         text: t("shareMessage", {
-          name,
-          scores,
           emoji: animalEmoji[animal],
           url: SHARE_URL,
         }),

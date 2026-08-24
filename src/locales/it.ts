@@ -25,7 +25,7 @@ const it: Translations = {
   noCardFits: "Nessuna carta combacia più",
   share: "Condividi",
   shareMessage:
-    "{name} ha vinto {scores} a Matchimals {emoji} Gratis e senza pubblicità: {url}",
+    "Ho appena vinto a Matchimals! {emoji} Gioca gratis a questo tenero gioco di carte, senza pubblicità! {url}",
   shareFooter: "gratis · senza pubblicità",
 
   pass: "Passa",

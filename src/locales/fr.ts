@@ -25,7 +25,7 @@ const fr: Translations = {
   noCardFits: "Plus aucune carte ne peut être posée",
   share: "Partager",
   shareMessage:
-    "{name} a gagné {scores} sur Matchimals {emoji} Gratuit et sans pub : {url}",
+    "Je viens de gagner à Matchimals ! {emoji} Joue gratuitement à ce mignon jeu de cartes, sans pub ! {url}",
   shareFooter: "gratuit · sans pub",
 
   pass: "Passer",
