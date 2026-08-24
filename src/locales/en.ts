@@ -22,6 +22,7 @@ const en: Translations = {
   scrollToCenter: "Scroll to center",
   exitToMainMenu: "Exit to main menu",
   wins: "{name} wins!",
+  noCardFits: "No card left fits the board",
   share: "Share",
   shareMessage: "{name} won {scores} in Matchimals {emoji} Free, no ads: {url}",
   shareFooter: "free · no ads",

@@ -28,6 +28,7 @@ export interface Translations {
   scrollToCenter: string;
   exitToMainMenu: string;
   wins: string;
+  noCardFits: string;
   share: string;
   // The line that travels with a shared victory picture
   shareMessage: string;

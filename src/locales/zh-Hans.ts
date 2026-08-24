@@ -22,6 +22,7 @@ const zhHans: Translations = {
   scrollToCenter: "回到中间",
   exitToMainMenu: "回主菜单",
   wins: "{name}赢了！",
+  noCardFits: "没有能放的牌了",
   share: "分享",
   shareMessage:
     "{name}在Matchimals中以{scores}获胜！{emoji} 免费、无广告：{url}",

@@ -22,6 +22,7 @@ const de: Translations = {
   scrollToCenter: "Zur Mitte",
   exitToMainMenu: "Zum Hauptmenü",
   wins: "{name} gewinnt!",
+  noCardFits: "Keine Karte passt mehr aufs Feld",
   share: "Teilen",
   shareMessage:
     "{name} gewinnt {scores} bei Matchimals {emoji} Kostenlos und ohne Werbung: {url}",

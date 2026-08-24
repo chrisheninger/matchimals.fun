@@ -24,6 +24,7 @@ const ja: Translations = {
   scrollToCenter: "中央にもどる",
   exitToMainMenu: "メニューへ",
   wins: "{name}のかち！",
+  noCardFits: "おけるカードがなくなったよ",
   share: "共有",
   shareMessage:
     "Matchimalsで{name}が{scores}でかち！{emoji} 無料・広告なし：{url}",

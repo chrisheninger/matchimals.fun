@@ -22,6 +22,7 @@ const ko: Translations = {
   scrollToCenter: "가운데로",
   exitToMainMenu: "메인 메뉴로",
   wins: "{name} 승리!",
+  noCardFits: "더 놓을 수 있는 카드가 없어요",
   share: "공유",
   shareMessage:
     "{name} Matchimals에서 {scores}로 승리! {emoji} 무료, 광고 없음: {url}",

@@ -22,6 +22,7 @@ const ptBR: Translations = {
   scrollToCenter: "Ir para o centro",
   exitToMainMenu: "Sair para o menu",
   wins: "{name} venceu!",
+  noCardFits: "Nenhuma carta mais se encaixa",
   share: "Compartilhar",
   shareMessage:
     "{name} venceu por {scores} no Matchimals {emoji} Grátis e sem anúncios: {url}",

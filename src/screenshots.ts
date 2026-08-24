@@ -40,6 +40,7 @@ const OVERLAY_STATES = [
   "animalChooser",
   "fitCheck",
   "fitCheckVictory",
+  "strandedVictory",
 ] as const;
 
 const includes = <T extends string>(list: readonly T[], state: string) =>
@@ -69,12 +70,16 @@ export const isBoardState = (state: ScreenshotState): state is BoardState =>
 // The snapshot a board state restores, and whether the game has ended
 export const snapshotForState = (
   state: BoardState
-): { id: SnapshotId; finished: boolean } => {
+): { id: SnapshotId; finished: boolean; stranded?: boolean } => {
   if (isVictory(state)) {
     return { id: VICTORIES[state], finished: true };
   }
   if (state === "fitCheckVictory") {
     return { id: "fourPlayerE", finished: true };
+  }
+  if (state === "strandedVictory") {
+    // The dead-end ending: the game is over with cards still in the deck
+    return { id: "fourPlayerE", finished: false, stranded: true };
   }
   if (isOverlay(state)) {
     return { id: "fourPlayerC", finished: false };

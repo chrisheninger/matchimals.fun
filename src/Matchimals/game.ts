@@ -267,10 +267,15 @@ export function createGame(mode: GameMode): Game<GameState> {
       restoreSnapshot: (
         { G },
         id: keyof typeof snapshots,
-        finished?: boolean
+        finished?: boolean,
+        stranded?: boolean
       ) => {
         if (id) {
-          // An empty deck ends the game on the spot (the victory screenshot)
+          // A stranded ending keeps the leftover deck but flags the dead end;
+          // an empty deck ends the game on the spot (both for screenshots)
+          if (stranded) {
+            return { ...snapshots[id], noValidMoves: true };
+          }
           return finished ? { ...snapshots[id], deck: [] } : snapshots[id];
         }
       },

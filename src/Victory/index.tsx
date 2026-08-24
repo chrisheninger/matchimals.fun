@@ -35,13 +35,21 @@ interface VictoryProps {
   player: PlayerId;
   players: Record<string, PlayerState>;
   cells: GameState["cells"];
+  // Cards stranded in the deck when the game ended with no legal move left
+  cardsLeft: number;
 }
 
 // The end-of-game card: the dialog chrome (logo header, white card) over
 // confetti, with the winner's circle in their color. Not dismissable — the
 // only way out is back to the main menu. Share hands the finished board to
 // the system share sheet as a picture.
-const Victory = ({ backToMainMenu, player, players, cells }: VictoryProps) => {
+const Victory = ({
+  backToMainMenu,
+  player,
+  players,
+  cells,
+  cardsLeft,
+}: VictoryProps) => {
   const {
     getItem: getAsyncLastReviewPrompt,
     setItem: setAsyncLastReviewPrompt,
@@ -168,6 +176,21 @@ const Victory = ({ backToMainMenu, player, players, cells }: VictoryProps) => {
         </ScrollView>
         <Header />
       </View>
+      {cardsLeft > 0 ? (
+        // The deck fades out under this overlay; its corner instead says why
+        // the game ended with cards to spare
+        <View
+          style={[
+            styles.leftover,
+            {
+              bottom: Math.max(insets.bottom, 16),
+              left: Math.max(insets.left, 16),
+            },
+          ]}
+        >
+          <Text style={styles.leftoverText}>{t("noCardFits")}</Text>
+        </View>
+      ) : null}
       {/* The picture to share, laid out at full size beside the screen where
           nothing shows it, and captured from there on demand */}
       <Portal>
@@ -229,6 +252,19 @@ const styles = StyleSheet.create({
   exit: {
     alignSelf: "stretch",
     marginTop: 12,
+  },
+  leftover: {
+    position: "absolute",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  leftoverText: {
+    color: colors.grayDark,
+    ...displayFont,
+    fontSize: 20,
+    lineHeight: 26,
   },
   shareCard: {
     position: "absolute",

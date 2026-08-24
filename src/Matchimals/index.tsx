@@ -7,7 +7,11 @@ import React, {
 } from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useSharedValue } from "react-native-reanimated";
+import Reanimated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import type { BoardProps } from "boardgame.io/dist/types/src/client/react";
 
 import { cardHeight, cardWidth, columns, rows } from "../constants/board";
@@ -81,9 +85,9 @@ const Matchimals = ({
     if (!snapshot) {
       return;
     }
-    const { id, finished } = snapshotForState(snapshot);
+    const { id, finished, stranded } = snapshotForState(snapshot);
     setPlayerConfig(screenshotPlayersFor(snapshot));
-    moves.restoreSnapshot(id, finished);
+    moves.restoreSnapshot(id, finished, stranded);
     tableRef.current?.scrollToCenter();
     setShowMenu(snapshot === "gameMenu");
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,6 +134,15 @@ const Matchimals = ({
   const dragCenterX = useSharedValue(0);
   const dragCenterY = useSharedValue(0);
   const dragActive = useSharedValue(false);
+
+  // The deck bows out under the victory overlay — cards it still holds would
+  // read as being in play
+  const gameOver = Boolean(ctx.gameover);
+  const deckOpacity = useSharedValue(1);
+  useEffect(() => {
+    deckOpacity.value = withTiming(gameOver ? 0 : 1, { duration: 300 });
+  }, [gameOver, deckOpacity]);
+  const deckFade = useAnimatedStyle(() => ({ opacity: deckOpacity.value }));
 
   // The pre-mounted overlay that carries a placed card from the release point
   // into its cell, so the drop responds on the next frame regardless of how
@@ -241,14 +254,18 @@ const Matchimals = ({
             currentPlayer={display.currentPlayer}
           />
         </View>
-        <Deck
-          cards={display.G.deck}
-          onCardDrop={onCardDrop}
-          dragCenterX={dragCenterX}
-          dragCenterY={dragCenterY}
-          dragActive={dragActive}
-          style={deckStyle}
-        />
+        <Reanimated.View
+          style={[deckStyle, deckFade]}
+          pointerEvents={gameOver ? "none" : "box-none"}
+        >
+          <Deck
+            cards={display.G.deck}
+            onCardDrop={onCardDrop}
+            dragCenterX={dragCenterX}
+            dragCenterY={dragCenterY}
+            dragActive={dragActive}
+          />
+        </Reanimated.View>
         <FlyingCard
           ref={flyingCardRef}
           nextCard={G.deck[0]}
@@ -283,6 +300,7 @@ const Matchimals = ({
           player={ctx.gameover}
           players={G.players}
           cells={G.cells}
+          cardsLeft={G.deck.length}
         />
       ) : null}
       <Menu
