@@ -27,7 +27,7 @@ const ja: Translations = {
   noCardFits: "おけるカードがなくなったよ",
   share: "共有",
   shareMessage:
-    "Matchimalsで勝ったよ！{emoji} かわいいカードゲーム、無料で広告なし！ {url}",
+    "Matchimalsで勝ったよ！{emoji} かわいいカードゲーム、無料・広告なし・オフラインでも遊べる！ {url}",
   shareFooter: "無料 · 広告なし",
 
   pass: "パス",

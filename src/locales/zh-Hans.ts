@@ -25,7 +25,7 @@ const zhHans: Translations = {
   noCardFits: "没有能放的牌了",
   share: "分享",
   shareMessage:
-    "我刚在 Matchimals 里赢了！{emoji} 快来玩这个超可爱的卡牌游戏，免费、无广告！{url}",
+    "我刚在 Matchimals 里赢了！{emoji} 快来玩这个超可爱的卡牌游戏，免费、无广告、离线也能玩！{url}",
   shareFooter: "免费 · 无广告",
 
   pass: "跳过",

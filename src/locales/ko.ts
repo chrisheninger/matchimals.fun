@@ -25,7 +25,7 @@ const ko: Translations = {
   noCardFits: "더 놓을 수 있는 카드가 없어요",
   share: "공유",
   shareMessage:
-    "방금 Matchimals에서 이겼어요! {emoji} 귀여운 카드 게임, 무료에 광고도 없어요! {url}",
+    "방금 Matchimals에서 이겼어요! {emoji} 귀여운 카드 게임, 무료에 광고 없고 오프라인에서도 돼요! {url}",
   shareFooter: "무료 · 광고 없음",
 
   pass: "패스",
