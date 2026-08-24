@@ -139,17 +139,50 @@ export function hasAnyLegalMove(G: GameState, ctx: Ctx): boolean {
   return cardHasAnyLegalMove(G, ctx, G.deck[0]);
 }
 
-// Rotate the deck until the top card has a legal placement somewhere on the
-// board, so every card that gets drawn is playable. If a full cycle through
-// the deck finds nothing, flag the dead end so endIf finishes the game.
+// Deck size at which surfacing switches from first-playable to
+// fewest-placements-first. Tuned by simulation: ordering the endgame this way
+// is what stops cards stranding, while ordering the whole game that way
+// starves a young board of the variety its endgame will need (a deck is 18
+// cards; 27 is one and a half decks).
+const CONSTRAINED_SURFACING_DECK = 27;
+
+// Keep the top of the deck playable. While the deck is deep, rotate to the
+// first playable card, leaving the shuffled order alone. From the last
+// CONSTRAINED_SURFACING_DECK cards on, surface the playable card with the
+// fewest legal placements instead: hard-to-place cards get drawn while the
+// board still has somewhere for them, which keeps cards from stranding as the
+// deck runs out (ties keep their shuffled order). If nothing in the deck can
+// be placed anywhere, flag the dead end so endIf finishes the game.
 export function ensurePlayableTopCard(G: GameState, ctx: Ctx): void {
-  for (let i = 0; i < G.deck.length; i++) {
-    if (hasAnyLegalMove(G, ctx)) {
-      return;
+  if (G.deck.length > CONSTRAINED_SURFACING_DECK) {
+    for (let i = 0; i < G.deck.length; i++) {
+      if (hasAnyLegalMove(G, ctx)) {
+        return;
+      }
+      G.deck.push(G.deck.shift()!);
     }
-    G.deck.push(G.deck.shift()!); // Unplayable right now — try again later
+    G.noValidMoves = true;
+    return;
   }
-  G.noValidMoves = true;
+  let bestIndex = -1;
+  let fewestCells = Infinity;
+  for (let i = 0; i < G.deck.length && fewestCells > 1; i++) {
+    let cells = 0;
+    for (let id = 0; id < G.cells.length && cells < fewestCells; id++) {
+      if (isLegalMove(G, ctx, id, G.deck[i])) {
+        cells++;
+      }
+    }
+    if (cells > 0 && cells < fewestCells) {
+      fewestCells = cells;
+      bestIndex = i;
+    }
+  }
+  if (bestIndex < 0) {
+    G.noValidMoves = true;
+    return;
+  }
+  G.deck.unshift(G.deck.splice(bestIndex, 1)[0]);
 }
 
 // Classic mode leaves the deck order alone, but still flags the dead end
