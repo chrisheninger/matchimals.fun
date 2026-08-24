@@ -19,7 +19,8 @@
     "typecheck": "tsc --noEmit",
     "check:locales": "bun scripts/check-locales.mjs",
     "format": "prettier --write 'src/**/*.{ts,tsx,js,json,md}'",
-    "generate:icons": "bun scripts/generate-app-icons.mjs"
+    "generate:icons": "bun scripts/generate-app-icons.mjs",
+    "print:cards": "bun scripts/print-cards.tsx"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -53,7 +54,9 @@
     "@babel/core": "^7.20.0",
     "@resvg/resvg-js": "^2.6.2",
     "@types/lodash": "^4.17.24",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "~19.2.14",
+    "@types/react-dom": "~19.2.0",
     "babel-preset-expo": "~56.0.0",
     "fontkit": "^2.0.4",
     "husky": "2.4.0",
@@ -61,6 +64,7 @@
     "jest-expo": "~56.0.5",
     "lint-staged": "8.2.0",
     "prettier": "2.8.8",
+    "qrcode": "^1.5.4",
     "react-test-renderer": "19.2.3",
     "sharp": "^0.35.3",
     "typescript": "~6.0.3"

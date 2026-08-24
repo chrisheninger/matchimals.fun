@@ -11,6 +11,9 @@
 /dist/
 *.jsbundle
 
+# Print-ready deck PDFs and previews (regenerate with `bun run print:cards`)
+/print/
+
 # node.js
 node_modules/
 npm-debug.log

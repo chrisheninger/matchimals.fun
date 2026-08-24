@@ -17,6 +17,7 @@ bun run test           # jest (jest-expo preset, --passWithNoTests)
 bun run typecheck      # tsc --noEmit (strict; keep this clean)
 bun run format         # prettier on src/**
 bun run generate:icons # re-render the app icons from the animal SVGs (outputs are committed)
+bun run print:cards    # render the physical deck + DriveThruCards PDF/X-1a files (outputs in print/, gitignored)
 
 bun run prebuild       # regenerate ios/ from app.json (expo prebuild -p ios --clean)
 bun run build:web      # static web export to dist/ (expo export -p web)
