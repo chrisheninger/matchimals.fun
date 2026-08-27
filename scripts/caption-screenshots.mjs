@@ -9,14 +9,16 @@
 //   bun run screenshots:caption --sets "family travel"  # only these sets
 //   bun run screenshots:caption --locales "en-US de-DE" # only these storefronts (failing on a missing caption)
 //   bun run screenshots:caption --displays "iphone-6.5"
-//   bun run screenshots:caption --frame slide           # how the screenshot sits under the band: card (default), bleed or slide
+//   bun run screenshots:caption --frame slide           # how the screenshot sits under the band: card (default), bleed, slide or device
 //   bun run screenshots:caption --out <dir>             # somewhere other than screenshots-captioned/
 //
 // Frames: `card` sets the screenshot on a rounded sticker card (dark line,
 // white edge, shadow) with a margin all round; `bleed` runs it edge to edge,
 // square-cornered, straight under the band and cropped at the bottom of the
 // slot; `slide` gives it slim side margins, rounded top corners and a soft
-// shadow, running off the bottom of the slot.
+// shadow, running off the bottom of the slot; `device` sets it into real
+// device art — the bezels in store/frames/ (see the README there for where
+// they come from).
 //
 // A caption set is store/captions/<set>.json: display ("*" for every display,
 // or a display folder name to override it) → state (A–E, Victory) → App Store
@@ -52,6 +54,26 @@ const screenshotsDir = path.join(root, "screenshots");
 const DISPLAYS = {
   "iphone-6.5": { width: 1284, height: 2778, band: 580, fontSize: 150 },
   "ipad-13": { width: 2064, height: 2752, band: 580, fontSize: 172 },
+};
+
+// The bezels in store/frames/ for --frame device: the art's canvas, where its
+// screen sits (from frameit-frames' offsets.json), and the radius of the
+// body's corners, for the shadow. The screenshot is resized into the screen
+// cutout, so a slot size needn't match it exactly (the iPad art is the
+// 12.9-inch screen, 0.8% off the 13-inch slot).
+const DEVICE_ART = {
+  "iphone-6.5": {
+    canvas: [1429, 2902],
+    screen: [1284, 2778],
+    offset: [74, 60],
+    radius: 190,
+  },
+  "ipad-13": {
+    canvas: [2245, 2930],
+    screen: [2048, 2732],
+    offset: [96, 102],
+    radius: 110,
+  },
 };
 const MAX_LINES = 2;
 // A caption wider than the band shrinks this far before the script gives up
@@ -306,6 +328,49 @@ const FRAMES = {
   bleed: (source, display) => {
     const { width: W, height: H, band } = DISPLAYS[display];
     return screenshot(source, { w: W, h: H, x: 0, y: band });
+  },
+  // The screenshot set into real device art, the whole device visible on a
+  // soft shadow
+  device: (source, display) => {
+    const { width: W, height: H, band } = DISPLAYS[display];
+    const art = DEVICE_ART[display];
+    const u = W / 1284;
+    const bottom = Math.round(64 * u);
+    const [fw, fh] = art.canvas;
+    const [sw, sh] = art.screen;
+    const [ox, oy] = art.offset;
+    // The device scaled to the room under the band, capped at a slim margin
+    const scale = Math.min((H - band - bottom) / fh, (W - 2 * 96 * u) / fw);
+    const w = Math.round(fw * scale);
+    const h = Math.round(fh * scale);
+    const x = Math.round((W - w) / 2);
+    const y = band;
+    const r = Math.round(art.radius * scale);
+    return [
+      ...shadow(W, H, x, y, x + w, y + h, r, u),
+      "(",
+      "-size",
+      `${fw}x${fh}`,
+      "xc:none",
+      "(",
+      source,
+      "-resize",
+      `${sw}x${sh}!`,
+      ")",
+      "-geometry",
+      `+${ox}+${oy}`,
+      "-composite",
+      path.join(root, "store/frames", `${display}.png`),
+      "-geometry",
+      "+0+0",
+      "-composite",
+      "-resize",
+      `${w}x${h}`,
+      ")",
+      "-geometry",
+      `+${x}+${y}`,
+      "-composite",
+    ];
   },
   // Slim side margins, rounded top corners and a soft shadow, running off
   // the bottom
