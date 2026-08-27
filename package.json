@@ -15,6 +15,7 @@
     "asc:previews": "bun scripts/asc-previews.mjs",
     "screenshots": "./scripts/screenshots.sh",
     "screenshots:locales": "./scripts/locale-screenshots.sh",
+    "screenshots:caption": "bun scripts/caption-screenshots.mjs",
     "test": "jest --passWithNoTests",
     "typecheck": "tsc --noEmit",
     "check:locales": "bun scripts/check-locales.mjs",

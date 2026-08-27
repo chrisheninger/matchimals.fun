@@ -9,6 +9,7 @@
 //   bun run asc:listing --locales "ja ko"    # only these storefronts
 //   bun run asc:listing --no-screenshots     # metadata only
 //   bun run asc:listing --replace-screenshots  # re-upload sets that already have screenshots
+//   bun run asc:listing --screenshots-dir screenshots-captioned/family  # a captioned set instead of screenshots/
 //
 // Authenticates with the App Store Connect API key in ~/.private_keys
 // (matchimals-asc.env naming ASC_KEY_ID and ASC_ISSUER_ID, beside
@@ -39,6 +40,7 @@ const dryRun = flag("--dry-run");
 const withScreenshots = !flag("--no-screenshots");
 const replaceScreenshots = flag("--replace-screenshots");
 const onlyLocales = option("--locales")?.split(/\s+/).filter(Boolean);
+const screenshotsDir = option("--screenshots-dir") ?? "screenshots";
 
 const log = (message) => console.log(message);
 const fail = (message) => {
@@ -427,7 +429,7 @@ const main = async () => {
         ).map((set) => [set.attributes.screenshotDisplayType, set])
       );
       for (const [folder, displayType] of Object.entries(DISPLAYS)) {
-        const dir = path.join(root, "screenshots", locale, folder);
+        const dir = path.join(root, screenshotsDir, locale, folder);
         const files = (await readdir(dir).catch(() => []))
           .filter((name) => name.endsWith(".png"))
           .sort()

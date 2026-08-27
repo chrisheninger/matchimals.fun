@@ -1,0 +1,76 @@
+{
+  "*": {
+    "A": {
+      "en-US": "Match the animals,\nscore the points.",
+      "es-ES": "Une los animales,\nsuma los puntos.",
+      "es-MX": "Une los animales,\nsuma los puntos.",
+      "pt-BR": "Combine os bichos,\nsome os pontos.",
+      "de-DE": "Tiere verbinden,\nPunkte sammeln.",
+      "fr-FR": "Associe les animaux,\nmarque des points.",
+      "it": "Abbina gli animali,\nfai punti.",
+      "ja": "どうぶつをつなげて\nポイントゲット",
+      "ko": "동물을 맞추고\n점수를 모아요",
+      "zh-Hans": "把动物连起来，\n积累分数"
+    },
+    "B": {
+      "en-US": "Pass and play —\n1 to 4 players.",
+      "es-ES": "Pasa y juega:\nde 1 a 4 jugadores.",
+      "es-MX": "Pasa y juega:\nde 1 a 4 jugadores.",
+      "pt-BR": "Passa e joga —\nde 1 a 4 jogadores.",
+      "de-DE": "Reihum spielen —\n1 bis 4 Spieler.",
+      "fr-FR": "À tour de rôle —\nde 1 à 4 joueurs.",
+      "it": "Si gioca a turno —\nda 1 a 4 giocatori.",
+      "ja": "1〜4人で\nこうたいであそぼう",
+      "ko": "한 기기로 번갈아\n1~4명이 함께",
+      "zh-Hans": "轮流传着玩，\n1 到 4 人"
+    },
+    "C": {
+      "en-US": "No ads, no in-app\npurchases. Ever.",
+      "es-ES": "Sin anuncios,\nsin compras. Nunca.",
+      "es-MX": "Sin anuncios,\nsin compras. Nunca.",
+      "pt-BR": "Sem anúncios,\nsem compras. Nunca.",
+      "de-DE": "Keine Werbung, keine\nIn-App-Käufe. Nie.",
+      "fr-FR": "Sans pub, sans achats\nintégrés. Jamais.",
+      "it": "Niente pubblicità,\nniente acquisti. Mai.",
+      "ja": "広告なし、課金なし。\nずっと。",
+      "ko": "광고 없음, 결제 없음.\n영원히.",
+      "zh-Hans": "没有广告，没有内购。\n永远。"
+    },
+    "D": {
+      "en-US": "Works offline,\nanywhere.",
+      "es-ES": "Funciona sin conexión,\ndonde sea.",
+      "es-MX": "Funciona sin conexión,\ndonde sea.",
+      "pt-BR": "Funciona offline,\nem qualquer lugar.",
+      "de-DE": "Funktioniert offline —\nüberall.",
+      "fr-FR": "Fonctionne hors ligne,\npartout.",
+      "it": "Funziona offline,\novunque.",
+      "ja": "オフラインでも\nどこでもあそべる",
+      "ko": "오프라인에서도\n어디서나",
+      "zh-Hans": "离线也能玩，\n随时随地"
+    },
+    "E": {
+      "en-US": "28 Matchimals\nto choose from!",
+      "es-ES": "¡28 Matchimals\npara elegir!",
+      "es-MX": "¡28 Matchimals\npara elegir!",
+      "pt-BR": "28 Matchimals\npara escolher!",
+      "de-DE": "28 Matchimals\nzur Auswahl!",
+      "fr-FR": "28 Matchimals\nau choix !",
+      "it": "28 Matchimals\ntra cui scegliere!",
+      "ja": "えらべるどうぶつは\n28ひき！",
+      "ko": "고를 수 있는 동물\n28마리!",
+      "zh-Hans": "28 只小动物\n任你选！"
+    },
+    "Victory": {
+      "en-US": "Highest score wins!",
+      "es-ES": "¡Gana quien sume\nmás puntos!",
+      "es-MX": "¡Gana quien sume\nmás puntos!",
+      "pt-BR": "Quem fizer mais\npontos vence!",
+      "de-DE": "Die höchste\nPunktzahl gewinnt!",
+      "fr-FR": "Le meilleur score\ngagne !",
+      "it": "Vince il punteggio\npiù alto!",
+      "ja": "いちばんポイントを\nとった人の勝ち！",
+      "ko": "점수가 가장 높으면\n승리!",
+      "zh-Hans": "谁分数高谁赢！"
+    }
+  }
+}
