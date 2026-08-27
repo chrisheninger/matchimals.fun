@@ -42,7 +42,6 @@ import * as fontkit from "fontkit";
 
 const exec = promisify(execFile);
 const root = path.resolve(import.meta.dirname, "..");
-const fontPath = path.join(root, "assets/fonts/Dimbo.ttf");
 const backgroundPath = path.join(root, "src/MainMenu/trianglify.png");
 const captionsDir = path.join(root, "store/captions");
 const screenshotsDir = path.join(root, "screenshots");
@@ -79,8 +78,6 @@ const MAX_LINES = 2;
 // A caption wider than the band shrinks this far before the script gives up
 // and asks for shorter wording
 const MIN_SCALE = 0.8;
-// Dimbo's line box is loose for display sizes
-const LINE_HEIGHT = 1.02;
 // The pill around the caption, in ems: padding, white edge, dark line, corner
 const PILL = { padX: 0.35, padY: 0.18, edge: 0.09, line: 0.04, radius: 0.4 };
 
@@ -109,33 +106,64 @@ const fail = (message) => {
 
 // --- Type ---------------------------------------------------------------------
 
-const font = fontkit.openSync(fontPath);
-const glyphs = new Set(font.characterSet);
-const naturalLineHeight =
-  (font.ascent - font.descent + font.lineGap) / font.unitsPerEm;
+// The caption faces: Dimbo for the Latin-script storefronts, and rounded
+// companions in the same spirit where Dimbo has no glyphs (all OFL — see
+// assets/fonts/README.md). Dimbo's line box is loose at display sizes; CJK
+// glyphs fill their em, so those faces take a roomier line.
+// `scale` trims the display's type size for full-width glyphs, which run
+// about twice Dimbo's advance — the pill scales with it
+const FONTS = {
+  default: { file: "Dimbo.ttf", lineHeight: 1.02 },
+  ja: { file: "MPLUSRounded1c-Bold.ttf", lineHeight: 1.16, scale: 0.72 },
+  ko: { file: "Jua-Regular.ttf", lineHeight: 1.16, scale: 0.72 },
+  "zh-Hans": { file: "ZCOOLKuaiLe-Regular.ttf", lineHeight: 1.16, scale: 0.72 },
+};
 
-const measure = (text, size) =>
-  (font.layout(text).advanceWidth / font.unitsPerEm) * size;
+const types = new Map();
+const typeFor = (storefront) => {
+  const spec = FONTS[storefront] ?? FONTS.default;
+  if (!types.has(spec.file)) {
+    const file = path.join(root, "assets/fonts", spec.file);
+    const font = fontkit.openSync(file);
+    types.set(spec.file, {
+      path: file,
+      lineHeight: spec.lineHeight,
+      scale: spec.scale ?? 1,
+      glyphs: new Set(font.characterSet),
+      naturalLineHeight:
+        (font.ascent - font.descent + font.lineGap) / font.unitsPerEm,
+      measure: (text, size) =>
+        (font.layout(text).advanceWidth / font.unitsPerEm) * size,
+    });
+  }
+  return types.get(spec.file);
+};
 
-// Checks a caption and sizes it for a display: its lines, the type size it
-// fits at, and the box the text needs
-const layout = (text, display, where) => {
+// Checks a caption and sizes it for a display and storefront: its lines, the
+// face, the type size it fits at, and the box the text needs
+const layout = (text, display, where, storefront) => {
+  const type = typeFor(storefront);
   const lines = text.split("\n");
   if (lines.length > MAX_LINES) {
     fail(`${where}: more than ${MAX_LINES} lines`);
   }
   const missing = [...text.replace(/\n/g, "")].filter(
-    (c) => !glyphs.has(c.codePointAt(0))
+    (c) => !type.glyphs.has(c.codePointAt(0))
   );
   if (missing.length) {
-    fail(`${where}: Dimbo lacks ${[...new Set(missing)].join(" ")}`);
+    fail(
+      `${where}: ${path.basename(type.path)} lacks ${[...new Set(missing)].join(
+        " "
+      )}`
+    );
   }
-  const { width, fontSize } = DISPLAYS[display];
+  const { width } = DISPLAYS[display];
+  const fontSize = Math.round(DISPLAYS[display].fontSize * type.scale);
   // What's left once the pill keeps its margin to the canvas
   const margin = Math.round(48 * (width / 1284));
   const maxWidth =
     width - 2 * margin - 2 * (PILL.padX + PILL.edge + PILL.line) * fontSize;
-  const widest = Math.max(...lines.map((line) => measure(line, fontSize)));
+  const widest = Math.max(...lines.map((line) => type.measure(line, fontSize)));
   let size = fontSize;
   if (widest > maxWidth) {
     size = Math.floor((fontSize * maxWidth) / widest);
@@ -147,8 +175,9 @@ const layout = (text, display, where) => {
   return {
     lines,
     size,
+    type,
     textWidth: Math.ceil((widest * size) / fontSize),
-    textHeight: Math.ceil(lines.length * size * LINE_HEIGHT),
+    textHeight: Math.ceil(lines.length * size * type.lineHeight),
   };
 };
 
@@ -187,7 +216,7 @@ const shadow = (W, H, x0, y0, x1, y1, r, u) => {
 // The caption on a white sticker pill — white edge, dark line — with a shadow
 const pill = (caption, display) => {
   const { width: W, height: H, band } = DISPLAYS[display];
-  const { size } = caption;
+  const { size, type } = caption;
   const padX = Math.round(PILL.padX * size);
   const padY = Math.round(PILL.padY * size);
   const edge = Math.round(PILL.edge * size);
@@ -225,11 +254,11 @@ const pill = (caption, display) => {
     "-background",
     "none",
     "-font",
-    fontPath,
+    type.path,
     "-pointsize",
     `${size}`,
     "-interline-spacing",
-    `${Math.round((LINE_HEIGHT - naturalLineHeight) * size)}`,
+    `${Math.round((type.lineHeight - type.naturalLineHeight) * size)}`,
     "-gravity",
     "center",
     "-fill",
@@ -508,7 +537,7 @@ const main = async () => {
           jobs.push({
             source: path.join(dir, file),
             output: path.join(target, file),
-            caption: layout(text, display, where),
+            caption: layout(text, display, where, storefront),
             display,
             label: `${set} · ${storefront}/${display}/${file}`,
           });
